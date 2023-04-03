@@ -17,7 +17,7 @@ import Switch from "../../components/Switch";
 const initialRecordState = {
   customerId: "1",
   productId: "",
-  ProductName: "",
+  productName: "",
   categoryId: "",
   brand: "",
   unitPrice: "",
@@ -40,7 +40,8 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
 
   const validate = () => {
     let temp = {};
-    temp.productName = values.productName !== "" ? "" : "This field is required";
+    temp.productName = 
+      values.productName !== "" ? "" : "This field is required";
     temp.categoryId =
       values.categoryId !== "" ? "" : "This field is required";
     temp.brand =
@@ -61,7 +62,6 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
     errors,
     setErrors,
     handleInputChange,
-    handleInputChangeUppercase,
     resetForm,
     handleSelectChange,
   } = useFormNew(initialRecordState, true, validate);
@@ -94,14 +94,15 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
     values.productId = Number(values.productId);
     values.categoryId = Number(values.categoryId);
     values.unitPrice = Number(values.unitPrice);
+    values.status =Number(values.status);
 
     if (mode == 0) {
-      values.createdBy = localStorage.getItem("LoginUserID");
+      values.createdUser = localStorage.getItem("LoginUserID");
       values.createdMachine = localStorage.getItem("LoginMachineIp");
       values.createdDateTime = new Date();
       values.modifiedDateTime = new Date();
     } else {
-      values.modifiedBy = localStorage.getItem("LoginUserID");
+      values.modifiedUser = localStorage.getItem("LoginUserID");
       values.modifiedMachine = localStorage.getItem("LoginMachineIp");
       values.modifiedDateTime = new Date();
     }
@@ -109,43 +110,24 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
 
   const saveRecord = (e) => {
     e.preventDefault();
+    
     if (validate()) {
       setModificationDetails();
+console.log("create",values);
       let response;
-      console.log("save");
-      if (mode) {
-        response = ProductService.update(values);
-        response.then((res) => {
-          setOpenDialog(false);
-          Alert(mode == 0 ? getMessage(201) : getMessage(202), 1);
-          setValues(initialRecordState);
-        });
-      } else {
-        response = ProductService.getByPrimaryKey(
-          values.customerId,
-          values.productId
-        );
+      (mode) ?
+        response = ProductService.update(values) :
+        response = ProductService.create(values)
 
-        response
-          .then((res) => {
-            if (res.data) {
-              Alert(getMessage(500), 3); //Record already exists.
-              return;
-            } else {
-              ProductService.create(values).then((result) => {
-                setOpenDialog(false);
-                setOpenDialog(false);
-                Alert(mode == 0 ? getMessage(201) : getMessage(202), 1);
-                setValues(initialRecordState);
-              });
-            }
-            setValues(initialRecordState);
-          })
-          .catch((e) => {
-            console.log(e);
-            Alert(mode == 0 ? getMessage(301) : getMessage(302), 3);
-          });
-      }
+      response.then((res) => {
+        setOpenDialog(false);
+        Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
+        setValues(initialRecordState);
+      })
+        .catch((e) => {
+          console.log(e);
+          Alert((mode == 0) ? getMessage(301) : getMessage(302), 3);
+        });
     }
   };
 
@@ -182,12 +164,12 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
               fullWidth
               variant="outlined"
               value={values.productName}
-              onChange={handleInputChangeUppercase}
+              onChange={handleInputChange}
               {...(errors.productName && {
                 error: true,
                 helperText: errors.productName,
               })}
-              disabled={mode != 0 ? true : false}
+              disabled={mode != 2 ? false : true}
               required={true}
             />
           </Grid>
@@ -200,7 +182,7 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
               fullWidth
               variant="outlined"
               value={values.brand}
-              onChange={handleInputChangeUppercase}
+              onChange={handleInputChange}
               {...(errors.brand && {
                 error: true,
                 helperText: errors.brand,

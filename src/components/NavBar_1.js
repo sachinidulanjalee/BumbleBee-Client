@@ -17,36 +17,19 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import FunctionService from "../services/FunctionService";
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import Tooltip from '@mui/material/Tooltip';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Tooltip from "@mui/material/Tooltip";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import moment from "moment";
-import { alpha } from '@mui/material/styles';
-
-import {
-  MenuBook,
-  PersonOutline,
-  Domain,
-  Category,
-  Extension,
-  DynamicFeed,
-  VerifiedUser,
-  Logout,
-  Dashboard as DashboardIcon,
-} from "@mui/icons-material";
+import { alpha } from "@mui/material/styles";
+import { Extension, Dashboard as DashboardIcon } from "@mui/icons-material";
 import { Route, Routes, Link } from "react-router-dom";
 import MainClassification from "../views/MainClassification/MainClassification";
-import Locations from "../views/Locations/Location";
-import LendingDetails from "../views/LendingDetails/LendingDetails";
-import SubClassification from "../views/SubClassification/SubClassification";
-import Book from "../views/Book/Book";
-import Member from "../views/Member/Member";
-import UserManagement from "../views/UserManagement/UserManagement";
-import Dashboard from "../views/Dashboard/Dashboard";
-import Footer from "./Footer";
-import Product from"../views/Product/Product";
+import Product from "../views/Product/Product";
 import ProductCategory from"../views/ProductCategory/ProductCategory";
+import UserManagement from"../views/UserManagement/UserManagement";
+import Footer from "./Footer";
 
 const drawerWidth = 240;
 
@@ -130,8 +113,6 @@ const initialRecordState = {
   ModifiedMachine: "",
 };
 
-
-
 export default function MiniDrawer() {
   //setInterval(getTime,1000)
 
@@ -141,11 +122,11 @@ export default function MiniDrawer() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [funcnList, setfuncnList] = useState([]);
 
-  const [time,setTime] = useState(new Date().toLocaleTimeString());
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
 
-  function getTime(){
-      setTime(new Date().toLocaleTimeString());
-   }
+  function getTime() {
+    setTime(new Date().toLocaleTimeString());
+  }
 
   useEffect(() => {
     if (localStorage.getItem("LoginState") !== "true") {
@@ -157,25 +138,36 @@ export default function MiniDrawer() {
 
   const getUserFunctions = () => {
     var aa = localStorage.getItem("LoginUserID");
-    FunctionService.GetByUserID(Number(aa))
-      .then((response) => {
-        const newArray = [];
-        response.data.forEach((x) => {
-          const _object = {
-            FunctionName: x.functionName,
-            FunctionURL: x.functionURL,
-            icon: x.icon,
-          };
-          newArray.push(_object);
-        });
 
-        localStorage.setItem("LoginAccessFunctions", JSON.stringify(newArray));
+    const newArray = [];
 
-        setfuncnList(newArray);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    const _object1 = {
+      FunctionName: "Product",
+      FunctionURL: "/Product",
+      icon: "DashboardIcon",
+    };
+
+    const Category = {
+      FunctionName: "ProductCategory",
+      FunctionURL: "/ProductCategory",
+      icon: "DashboardIcon",
+    };
+    const UserManagement = {
+      FunctionName: "UserManagement",
+      FunctionURL: "/UserManagement",
+      icon: "DashboardIcon",
+    };
+   
+
+    //newArray.push(_object);
+    newArray.push(_object1);
+    newArray.push(Category);
+    newArray.push(UserManagement);
+
+
+    localStorage.setItem("LoginAccessFunctions", JSON.stringify(newArray));
+
+    setfuncnList(newArray);
   };
 
   function LogOut() {
@@ -192,19 +184,20 @@ export default function MiniDrawer() {
   };
 
   const handleOpenUserMenu = (event) => {
-
     setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseUserMenu = () => {
-
     setAnchorElUser(null);
   };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}
-      sx={{backgroundColor:alpha('#0B0B61', 0.8)}}>
+      <AppBar
+        position="fixed"
+        open={open}
+        sx={{ backgroundColor: alpha("#43A5CF", 0.8) }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -214,18 +207,26 @@ export default function MiniDrawer() {
             sx={{
               marginRight: 5,
               ...(open && { display: "none" }),
-              
             }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 11 }}>
           Bumble bee: Buy first and pay later
-          </Typography >
-          <Box sx={{ flexGrow: 1, display: "flex", flexDirection: "row", justifyContent: "flex-end" }}>
-          <h5 sx={{ display: "flex", alignItems: "center" }}>{moment(new Date()).format("yyyy-MM-DD")}&nbsp;&nbsp; {time}&nbsp;&nbsp;</h5> 
+          </Typography>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <h5 sx={{ display: "flex", alignItems: "center" }}>
+              {moment(new Date()).format("yyyy-MM-DD")}&nbsp;&nbsp; {time}
+              &nbsp;&nbsp;
+            </h5>
             <Tooltip title="Log Out">
-
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -236,7 +237,6 @@ export default function MiniDrawer() {
               >
                 <AccountCircle />
               </IconButton>
-
             </Tooltip>
             <Menu
               sx={{
@@ -246,30 +246,27 @@ export default function MiniDrawer() {
               id="menu-appbar"
               anchorEl={anchorElUser}
               anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               keepMounted
               transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: "top",
+                horizontal: "right",
               }}
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-            
-              <MenuItem
-                onClick={() => LogOut()}
-                key={"Logout"}
-              >
-              
+              <MenuItem onClick={() => LogOut()} key={"Logout"}>
                 {<LogoutIcon />} &nbsp; LogOut
               </MenuItem>
             </Menu>
-           
-            <h3>{localStorage.getItem("LoginUserName").charAt(0).toUpperCase() + localStorage.getItem("LoginUserName").slice(1)}</h3>
-          </Box>
 
+            <h3>
+              {localStorage.getItem("LoginUserName").charAt(0).toUpperCase() +
+                localStorage.getItem("LoginUserName").slice(1)}
+            </h3>
+          </Box>
         </Toolbar>
         <Footer></Footer>
       </AppBar>
@@ -277,7 +274,11 @@ export default function MiniDrawer() {
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <div sx={{ display: "flex", alignItems: "center" }}>
-            <img width="100" src={process.env.PUBLIC_URL + "img/DMS_Logo.gif"} style={{ marginRight: 30 }} />
+            <img
+              width="100"
+              src={process.env.PUBLIC_URL + "img/BumbleBee_Logo.png"}
+              style={{ marginRight: 30 }}
+            />
           </div>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -286,7 +287,6 @@ export default function MiniDrawer() {
               <ChevronLeftIcon />
             )}
           </IconButton>
-
         </DrawerHeader>
         <Divider />
         <List>
@@ -308,18 +308,7 @@ export default function MiniDrawer() {
                   justifyContent: "center",
                 }}
               >
-                {
-                  (row.icon == "MenuBook") ? <MenuBook /> :
-                    (row.icon == "Category") ? <Category /> :
-                      (row.icon == "Extension") ? <Extension /> :
-                        (row.icon == "DynamicFeed") ? <DynamicFeed /> :
-                          (row.icon == "Domain") ? <Domain /> :
-                            (row.icon == "PersonOutline") ? <PersonOutline /> :
-                              (row.icon == "DynamicFeed") ? <DynamicFeed /> :
-                                (row.icon == "VerifiedUser") ? <VerifiedUser /> :
-                                (row.icon == "Dashboard") ? <DashboardIcon /> :
-                                <Extension />
-                }
+                {<DashboardIcon />}
               </ListItemIcon>
               <ListItemText
                 primary={row.FunctionName}
@@ -334,15 +323,11 @@ export default function MiniDrawer() {
         <DrawerHeader />
         <Routes>
           <Route path="/MainClassification" element={<MainClassification />} />
-          <Route path="/LendingDetails" element={<LendingDetails />} />
-          <Route path="/Locations" element={<Locations />} />
-          <Route path="/Book" element={<Book />} />
-          <Route path="/SubClassification" element={<SubClassification />} />
-          <Route path="/Member" element={<Member />} />
-          <Route path="/UserManagement" element={<UserManagement />} />
-          <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Product" element={<Product />} />
-          <Route path="/ProductCategory" element={<ProductCategory />} />
+          <Route path="/ProductCategory" element={<ProductCategory />} />       
+          <Route path="/UserManagement" element={<UserManagement />} />             
+{" "}
+
         </Routes>
       </Box>
     </Box>

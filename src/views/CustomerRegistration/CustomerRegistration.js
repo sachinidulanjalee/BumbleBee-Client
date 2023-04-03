@@ -1,51 +1,53 @@
 import React, { useState, useEffect } from "react";
-import ProductService from "../../services/ProductService";
-import { Card, CardContent, CardHeader, IconButton } from "@mui/material";
-import { CreateProduct } from "./ProductForm";
+import UserService from "../../services/UserService";
+import { Card, CardContent, CardHeader } from "@mui/material";
 import Alert from "../../common/alert";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import PopupFrom from "../../components/PopupFrom";
 import GridAddButton from "../../components/GridAddButton";
+import * as DefineValues from "../../common/DefineValues";
+import { CreateUserManagement } from "./UserManagementForm";
 import DeleteButton from "../../components/DeleteButton";
 import CheckBoxGrid from "../../components/CheckBoxGrid";
 import getMessage from "../../common/Messages";
-import * as DefineValues from "../../common/DefineValues";
+import moment from "moment";
 
-const customerId = 1;
-const fromName = "Product";
+const fromName = "Registration";
 
 const columns = [
-
   {
-    field: "productId",
-    headerName: "Product Id",
+    field: "userName",
+    headerName: "User Name",
     width: 200,
     align: "left",
+    headerAlign: "left",
   },
   {
-    field: "productName",
-    headerName: "Description",
+    field: "email",
+    headerName: "Email",
+    width: 200,
+    align: "left",
+    headerAlign: "left",
+  },
+  {
+    field: "mobileNo",
+    headerName: "Mobile No",
     minWidth: 200,
     flex: 1,
     align: "left",
+    headerAlign: "left",
   },
   {
-    field: "categoryName",
-    headerName: "Category",
+    field: "expiryDate",
+    headerName: "Expiry Date",
     minWidth: 200,
     flex: 1,
     align: "left",
+    headerAlign: "left",
   },
   {
-    field: "brand",
-    headerName: "Brand",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-  },
-  {
-    field: "unitPrice",
-    headerName: "Unit Price",
+    field: "maximumAttemps",
+    headerName: "Maximum Attemps",
     minWidth: 200,
     flex: 1,
     align: "left",
@@ -61,20 +63,20 @@ const columns = [
   },
 ];
 
-export default function Product() {
+export default function CustomerRegistration() {
   const [errorList, setErrorList] = useState([]);
-  const [product, setProduct] = useState([]);
-  const [selectedProduct, setselectedProduct] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [selectedRecorde, setSelectedRecorde] = useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
     title: "",
     subTitle: "",
   });
-  const [mode, setMode] = useState(0);
+  const [mode, setMode] = useState(0); // 0-create, 1- edit, 2- view
   const [selectedRows, setSelectedRows] = useState([]);
   const [canDelete, setCanDelete] = useState(false);
-  const [status, setstatus] = useState(DefineValues.status());
+  const [status, setstatus] = useState(DefineValues.userStatus());
 
   useEffect(() => {
     var AccessFunctions = JSON.parse(
@@ -82,19 +84,18 @@ export default function Product() {
     );
 
     if (
-      AccessFunctions.filter((item) => item.FunctionURL === "/Product").length ===
-      0
+      AccessFunctions.filter((item) => item.FunctionURL === "/CustomerRegistration")
+        .length === 0
     ) {
       window.location.replace("/UnAuthorized");
     }
-    getProduct();
+    getAllRecordes();
   }, [openCreateDialog, confirmDialog]);
 
-  const getProduct = () => {
-    ProductService.getAll(customerId)
+  const getAllRecordes = () => {
+    UserService.getAll()
       .then((response) => {
-        console.log(response.data);
-        setProduct(response.data);
+        setUsers(response.data);
       })
       .catch((e) => {
         Alert(getMessage(400), 3);
@@ -102,31 +103,31 @@ export default function Product() {
   };
 
   const rows = () => {
-    return product.map((product, key) => ({
+    return users.map((member, key) => ({
       id: key,
-      customerId: product.companyId,
-      productId: product.productId,
-      productName: product.productName,
-      categoryId: product.categoryId,
-      brand:product.brand,
-      categoryName:product.categoryName,
-      unitPrice: product.unitPrice,
-      status:DefineValues.status().find(x => x.value == product.status).text,
+      userID: member.userID,
+      userName: member.userName,
+      email: member.email,
+      mobileNo: member.mobileNo,
+      expiryDate: moment(member.expiryDate).format("yyyy-MM-DD"),
+      maximumAttemps: member.maximumAttemps,
+      status: status.find((x) => x.value == member.status).text,
+      isPrimaryKeyExist: false,
     }));
   };
 
   const handleCreateDialogOpen = () => {
-    setselectedProduct(null);
+    setSelectedRecorde(null);
     setErrorList([]);
     setMode(0);
     setOpenCreateDialog(true);
   };
 
-  const handleViewDialogOpen = (record) => {
-    if (record != null) {
-      ProductService.get(customerId, record.productId)
+  const handleViewDialogOpen = (item) => {
+    if (item != null) {
+      UserService.get(item.userID)
         .then((res) => {
-          setselectedProduct(res.data);
+          setSelectedRecorde(res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -138,18 +139,13 @@ export default function Product() {
 
   const onDelete = () => {
     const lstRowId = [];
-
     selectedRows.map((id) => {
-      let selectedRow = product.find(
-        (x) =>
-          x.productId === rows()[id].productId &&
-          x.customerId === rows()[id].customerId
-      );
+      let selectedRow = users.find((x) => x.userID === rows()[id].userID);
       if (selectedRow != null) lstRowId.push(selectedRow);
     });
 
     if (lstRowId.length != 0) {
-      ProductService.BulkRemove(lstRowId)
+      UserService.BulkRemove(lstRowId)
         .then((res) => {
           setConfirmDialog({
             ...confirmDialog,
@@ -157,9 +153,9 @@ export default function Product() {
           });
 
           if (res.data) {
-            Alert(getMessage(203), 1);
+            Alert("Successfully Deleted.", 1);
           } else {
-            Alert(getMessage(303), 3);
+            Alert("Delete Faild.", 3);
           }
         })
         .catch((e) => {
@@ -171,8 +167,8 @@ export default function Product() {
 
   return (
     <>
-      <Card>
-      <CardHeader title={fromName} sx={{ paddingBottom: 0 }}></CardHeader>
+      <Card sx={{ m: 5, marginTop: 2 }}>
+        <CardHeader title={fromName}></CardHeader>
         <CardContent>
           <GridAddButton
             fromName={fromName}
@@ -196,25 +192,29 @@ export default function Product() {
             setCanDelete={setCanDelete}
             setSelectedRows={setSelectedRows}
             handleViewDialogOpen={handleViewDialogOpen}
+            isCheckBoxTable={false}
           />
+
           <PopupFrom
             openDialog={openCreateDialog}
             setOpenDialog={setOpenCreateDialog}
             title={fromName}
             mode={mode}
             setMode={setMode}
+            maxWidth="md"
           >
-            <CreateProduct
+            <CreateUserManagement
               setOpenDialog={setOpenCreateDialog}
               mode={mode}
-              selectedProduct={selectedProduct}
-              product={product}
+              selectedRecorde={selectedRecorde}
+              users ={users}
             />
           </PopupFrom>
+
           <ConfirmDialog
             openDialog={confirmDialog}
             setOpenDialog={setConfirmDialog}
-            selectedRecorde={selectedProduct}
+            selectedRecorde={selectedRecorde}
           ></ConfirmDialog>
         </CardContent>
       </Card>

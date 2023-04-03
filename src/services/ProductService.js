@@ -12,17 +12,12 @@ const getAll = (customerId) => {
     return http.get(`Product/GetAll/${customerId}`);
   };
 
-const get = (subClassificationID,classificationID) => {
-  return http.get(`Product/GetById/${subClassificationID}/${classificationID}`);
+const get = (customerId,productId) => {
+  return http.get(`Product/GetByPrimaryKey/${customerId}/${productId}`);
 };
 
-var isExists=new Boolean(false);
-isExists = (subClassificationID) => {
-  return http.get(`Product/IsExists/${subClassificationID}`);
-};
-
-const remove = (subClassificationID,classificationID) => {
-  return http.delete(`Product/DeleteByPram/${subClassificationID}/${classificationID}`);
+const remove = (productId,customerId) => {
+  return http.delete(`Product/Delete/${productId}/${customerId}`);
 };
 
 const BulkRemove = (data) => {
@@ -41,6 +36,5 @@ export default {
   get,
   remove,
   BulkRemove,
-  isExists,
   GetCategoryComboModel
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DialogActions, Button } from "@mui/material";
 import { Check, Close, Image } from "@material-ui/icons";
+
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -17,7 +18,6 @@ import getMessage from "../../common/Messages";
 import Alert from "../../common/alert";
 import ChnagePassword from "./ChnagePassword";
 
-
 import axios from 'axios'
 
 
@@ -30,8 +30,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © 2022 "}
-      <Link color="inherit" href="https://www.BubmbleBee.com/">
-      Bumble bee: Buy first and pay later.
+      <Link color="inherit" href="https://www.dmsswe.com/">
+        DMS Software Engineering (Pvt) Ltd.
       </Link>
       {"  All rights reserved."}
     </Typography>
@@ -75,65 +75,61 @@ function Login() {
 
   }, [IsOpenPasswordChangeDialog]);
 
+  const LoginClick = (e) => {
+    e.preventDefault();
+    if (validate()) {
+
+      let response;
+      response = LoginService.Login(values.userName, values.password);
+
+      response
+        .then((res) => {
+          switch (res.data.result) {
+            case 0:
+              Alert(res.data.msg, 3);
+              break;
+            case 1:
+              setIsOpenPasswordChangeDialog(true);
+              break;
+            case 2:
+              debugger;
+              localStorage.setItem("LoginState", "true");
+              localStorage.setItem("LoginUserID", res.data.userId);
+              localStorage.setItem("LoginUserName", res.data.userName);
+              localStorage.setItem("LoginMachineIp", ip);
+              window.location.replace("/Dashboard");
+              break;
+            case 3:
+              Alert(res.data.msg, 3);
+              break;
+            case 4:
+              Alert(res.data.msg, 3);
+              break;
+            case 5:
+              Alert(res.data.msg, 3);
+              break;
+          }
+        })
+        .catch((e) => {
+          Alert(getMessage(503), 3);
+        });
+    } else {
+      Alert("Invalid Username or Password.", 3);
+    }
+  };
   // const LoginClick = (e) => {
   //   e.preventDefault();
   //   if (validate()) {
-
-  //     let response;
-  //     response = LoginService.Login(values.userName, values.password);
-
-  //     response
-  //       .then((res) => {
-  //         switch (res.data.result) {
-  //           case 0:
-  //             Alert(res.data.msg, 3);
-  //             break;
-  //           case 1:
-  //             setIsOpenPasswordChangeDialog(true);
-  //             break;
-  //           case 2:
-  //             debugger;
-  //             localStorage.setItem("LoginState", "true");
-  //             // localStorage.setItem("LoginUserID", res.data.userId);
-  //             // localStorage.setItem("LoginUserName", res.data.userName);
-  //             localStorage.setItem("LoginUserID", "1");
-  //             localStorage.setItem("LoginUserName", "userName");
-  //             localStorage.setItem("LoginMachineIp", ip);
-  //             window.location.replace("/Dashboard");
-  //             break;
-  //           case 3:
-  //             Alert(res.data.msg, 3);
-  //             break;
-  //           case 4:
-  //             Alert(res.data.msg, 3);
-  //             break;
-  //           case 5:
-  //             Alert(res.data.msg, 3);
-  //             break;
-  //         }
-  //       })
-  //       .catch((e) => {
-  //         Alert(getMessage(503), 3);
-  //       });
+  //     localStorage.setItem("LoginState", "true");
+  //     localStorage.setItem("LoginUserID", "1");
+  //     localStorage.setItem("LoginUserName", "userName");
+  //     localStorage.setItem("LoginMachineIp", "ip");
+  //     window.location.replace("/CompanyDashboard");
   //   } else {
   //     Alert("Invalid Username or Password.", 3);
   //   }
   // };
 
-  const LoginClick = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      //var token = LoginService.GetToken("5005")
-       //console.log("token", token);
-      localStorage.setItem("LoginState", "true");
-      localStorage.setItem("LoginUserID", "1");
-      localStorage.setItem("LoginUserName", "userName");
-      localStorage.setItem("LoginMachineIp", "ip");
-      window.location.replace("/Dashbord");
-    } else {
-      Alert("Invalid Username or Password.", 3);
-    }
-  };
   return (
     <div>
       <form noValidate onSubmit={LoginClick}>
@@ -234,18 +230,19 @@ function Login() {
                     Sign In
                   </Button>
 
-                  {/* <Grid container>
+
+                  <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
+                  <Link href="/ChnagePassword" variant="body2">
                     Forgot password?
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="/CustomerRegistrationForm" variant="body2"  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
-              </Grid> */}
+              </Grid>
                   <Copyright sx={{ mt: 5 }} />
                 </Box>
               </Box>

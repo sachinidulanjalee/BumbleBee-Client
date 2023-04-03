@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Check, Close, Image } from "@material-ui/icons";
-
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
