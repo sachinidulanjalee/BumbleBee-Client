@@ -84,6 +84,7 @@ function Login() {
 
       response
         .then((res) => {
+          console.log("res", res.data.userID)
           switch (res.data.result) {
             case 0:
               Alert(res.data.msg, 3);
@@ -94,7 +95,7 @@ function Login() {
             case 2:
               debugger;
               localStorage.setItem("LoginState", "true");
-              localStorage.setItem("LoginUserID", res.data.userId);
+              localStorage.setItem("LoginUserID", res.data.userID);
               localStorage.setItem("LoginUserName", res.data.userName);
               localStorage.setItem("LoginMachineIp", ip);
               window.location.replace("/Dashboard");
@@ -238,7 +239,7 @@ function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/CustomerRegistrationForm" variant="body2"  >
+                  <Link href="/CustomerRegistration" variant="body2"  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

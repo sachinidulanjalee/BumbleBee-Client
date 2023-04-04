@@ -28,6 +28,10 @@ const getAllComboModel = () => {
   return http.get("User/GetAllComboModel");
 };
 
+const Usercreate = (data) => {
+  return http.post("User/UserAdd", data);
+};
+
 
 // eslint-disable-next-line
 export default {
@@ -37,5 +41,6 @@ export default {
   get,
   remove,
   getAllComboModel,
-  BulkRemove
+  BulkRemove,
+  Usercreate
 };

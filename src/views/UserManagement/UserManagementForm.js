@@ -18,15 +18,16 @@ const initialRecordState = {
   password: "",
   email: "",
   mobileNo: "",
-  expiryDate: moment(new Date("01-01-0022")).format("yyyy-MM-DD"),
+  userType:"",
+  expiryDate: moment(new Date("01-01-0023")).format("yyyy-MM-DD"),
   maximumAttemps: "",
   status: DefineValues.userStatus().find(x => x.text == "New User").value,
   funcationIDs: [],
   createdDateTime: "",
-  createdBy: "",
+  createdUser: "",
   createdMachine: "",
   modifiedDateTime: "",
-  modifiedBy: "",
+  modifiedUser: "",
   modifiedMachine: '',
 };
 
@@ -57,6 +58,7 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
     let temp = {};
     temp.userName = values.userName !== "" ? isExistUserName() : "This field is required";
     temp.password = values.password !== "" ? "" : "This field is required";
+    temp.userType = values.userType !== "" ? "" : "This field is required";
     temp.status = values.status !== "" ? "" : "This field is required";
     temp.funcationIDs = values.funcationIDs.length != 0 ? "" : "This field is required";
     temp.mobileNo = values.mobileNo !== "" ? "" : "This field is required";
@@ -96,15 +98,16 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
     values.userID = Number(values.userID);
     values.maximumAttemps = Number(values.maximumAttemps);
     values.status = Number(values.status);
+    values.userType= Number(values.userType);
 
     if (mode == 0) {
-      values.createdBy = localStorage.getItem("LoginUserID");
+      values.createdUser = localStorage.getItem("LoginUserID");
       values.createdMachine = localStorage.getItem("LoginMachineIp");
       values.createdDateTime = new Date();
       values.modifiedDateTime = new Date();
     }
     else {
-      values.modifiedBy = localStorage.getItem("LoginUserID");
+      values.modifiedUser = localStorage.getItem("LoginUserID");
       values.modifiedMachine = localStorage.getItem("LoginMachineIp");
       values.modifiedDateTime = new Date();
     }
@@ -123,7 +126,6 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
         : response = UserService.create(values)
 
       response.then((res) => {
-        setOpenDialog(false);
         Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
         setValues(initialRecordState);
         window.location.reload(false)
@@ -170,6 +172,18 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
               disabled={(mode != 2) ? false : true}
               required={true}
               inputProps={{ maxLength: 50 }}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <CommonAutocomplete
+              mode={mode}
+              fieldName="userType"
+              label="UserType"
+              value={values.userType}
+              options={DefineValues.userType()}
+              handleSelectChange={handleSelectChange}
+              errors={errors.userType}
+              disabled={(mode != 2) ? false : true}
             />
           </Grid>
 

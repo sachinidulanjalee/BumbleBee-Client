@@ -47,6 +47,7 @@ import Dashboard from "../views/Dashboard/Dashboard";
 import Footer from "./Footer";
 import Product from"../views/Product/Product";
 import ProductCategory from"../views/ProductCategory/ProductCategory";
+import CustomerRegistration from"../views/CustomerRegistration/CustomerRegistration";
 
 const drawerWidth = 240;
 
@@ -157,6 +158,7 @@ export default function MiniDrawer() {
 
   const getUserFunctions = () => {
     var aa = localStorage.getItem("LoginUserID");
+    console.log(aa);
     FunctionService.GetByUserID(Number(aa))
       .then((response) => {
         const newArray = [];
@@ -343,6 +345,7 @@ export default function MiniDrawer() {
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Product" element={<Product />} />
           <Route path="/ProductCategory" element={<ProductCategory />} />
+          <Route path="/CustomerRegistration" element={<CustomerRegistration />} />
         </Routes>
       </Box>
     </Box>

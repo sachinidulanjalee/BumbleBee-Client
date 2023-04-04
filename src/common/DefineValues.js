@@ -298,3 +298,8 @@ export const userStatus = () => [
   { value: "4", text: "Auto Inactive" },
   { value: "5", text: "Inactive" },
 ];
+export const userType = () => [
+  { value: "1", text: "SuperUser" },
+  { value: "2", text: "Admin" },
+  { value: "3", text: "User" },
+];

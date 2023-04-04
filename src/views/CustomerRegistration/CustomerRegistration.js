@@ -1,98 +1,103 @@
 import React, { useState, useEffect } from "react";
-import UserService from "../../services/UserService";
-import { Card, CardContent, CardHeader } from "@mui/material";
-import Alert from "../../common/alert";
-import ConfirmDialog from "../../common/ConfirmDialog";
-import PopupFrom from "../../components/PopupFrom";
-import GridAddButton from "../../components/GridAddButton";
-import * as DefineValues from "../../common/DefineValues";
-import { CreateUserManagement } from "./UserManagementForm";
-import DeleteButton from "../../components/DeleteButton";
-import CheckBoxGrid from "../../components/CheckBoxGrid";
-import getMessage from "../../common/Messages";
+import { useFormNew } from "../../hooks/useFormNew";
+import { Grid, TextField,Typography } from "@mui/material";
 import moment from "moment";
+import Alert from "../../common/alert";
+import * as DefineValues from "../../common/DefineValues";
+import FormFooterButton from "../../components/FormFooterButton";
+import SmallCommonAutocomplete from "../../components/Autocomplete/SmallCommonAutocomplete";
+import CheckBoxList from "../../components/CheckBoxList";
+import UserService from "../../services/UserService";
+import FunctionService from "../../services/FunctionService";
+import getMessage from "../../common/Messages";
+import getValidationRule from "../../common/ValidationRules";
+import { Card, CardContent, CardHeader, Divider } from "@mui/material";
 
-const fromName = "Registration";
 
-const columns = [
-  {
-    field: "userName",
-    headerName: "User Name",
-    width: 200,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "email",
-    headerName: "Email",
-    width: 200,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "mobileNo",
-    headerName: "Mobile No",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "expiryDate",
-    headerName: "Expiry Date",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "maximumAttemps",
-    headerName: "Maximum Attemps",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-    headerAlign: "left",
-  },
-  {
-    field: "status",
-    headerName: "Status",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-    headerAlign: "left",
-  },
-];
+const initialRecordState = {
+  userID: "",
+  userName: "",
+  password: "",
+  email: "",
+  mobileNo: "",
+  userType:DefineValues.userType().find(x => x.text == "User").value,
+  expiryDate: moment(new Date("12-31-2023")).format("yyyy-MM-DD"),
+  maximumAttemps: "3",
+  status: DefineValues.userStatus().find(x => x.text == "Active").value,
+  createdDateTime: "",
+  createdUser: "",
+  createdMachine: "",
+  modifiedDateTime: "",
+  modifiedUser: "",
+  modifiedMachine: '',
+};
 
-export default function CustomerRegistration() {
-  const [errorList, setErrorList] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [selectedRecorde, setSelectedRecorde] = useState(null);
-  const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState({
-    isOpen: false,
-    title: "",
-    subTitle: "",
-  });
-  const [mode, setMode] = useState(0); // 0-create, 1- edit, 2- view
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [canDelete, setCanDelete] = useState(false);
-  const [status, setstatus] = useState(DefineValues.userStatus());
+export default function CustomerRegistration({ setOpenDialog, mode, selectedRecorde }) {
+  const [isReset, setIsReset] = useState(false);
+  const [users, setUsers] = useState();
+  const [lstFuncation, setLstFuncation] = useState([]);
+
+  const isExistEmail = () => {
+    if (values.email === "") return "";
+
+    let recorde = users.find(x => x.email == values.email);
+    if (recorde != null) {
+      return (recorde.userID == values.userID) ? "" : "Email Already Added"
+    }
+    else
+      return ""
+  }
+
+  const isExistUserName = () => {
+    let recorde = users.find(x => x.userName === values.userName);
+    if (recorde != null){
+      console.log(recorde.userName, values.userName)
+      return ( recorde.userID == values.userID) ? "" : "User Name Already Added"
+    }else
+      return ""
+  }
+
+  const validate = () => {
+    let temp = {};
+    temp.userName = values.userName !== "" ? isExistUserName() : "This field is required";
+    temp.password = values.password !== "" ? "" : "This field is required";
+    temp.userType = values.userType !== "" ? "" : "This field is required";
+    temp.status = values.status !== "" ? "" : "This field is required";
+    temp.mobileNo = values.mobileNo !== "" ? "" : "This field is required";
+    temp.email = (values.email === "" || getValidationRule("email").test(values.email)) ?
+      isExistEmail() : "Please Enter Valide Email";
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === "");
+  };
+
+  const { values, setValues, errors, setErrors, handleInputChange, handleSelectChange, resetForm, handleCheckBoxChange } = useFormNew(initialRecordState, true, validate);
 
   useEffect(() => {
-    var AccessFunctions = JSON.parse(
-      localStorage.getItem("LoginAccessFunctions")
-    );
-
-    if (
-      AccessFunctions.filter((item) => item.FunctionURL === "/CustomerRegistration")
-        .length === 0
-    ) {
-      window.location.replace("/UnAuthorized");
+    resetForm();
+    if (selectedRecorde != null) {
+      setValues({
+        ...selectedRecorde
+      })
     }
-    getAllRecordes();
-  }, [openCreateDialog, confirmDialog]);
 
-  const getAllRecordes = () => {
+  }, [selectedRecorde, isReset])
+
+  useEffect(() => {
+    getAllFunctions();
+    getAllUsers();
+  }, [])
+
+  const getAllFunctions = () => {
+    FunctionService.getAll()
+      .then((response) => {
+        setLstFuncation(response.data);
+      })
+      .catch((e) => {
+        Alert(getMessage(400), 3);
+      });
+  };
+
+  const getAllUsers = () => {
     UserService.getAll()
       .then((response) => {
         setUsers(response.data);
@@ -102,122 +107,212 @@ export default function CustomerRegistration() {
       });
   };
 
-  const rows = () => {
-    return users.map((member, key) => ({
-      id: key,
-      userID: member.userID,
-      userName: member.userName,
-      email: member.email,
-      mobileNo: member.mobileNo,
-      expiryDate: moment(member.expiryDate).format("yyyy-MM-DD"),
-      maximumAttemps: member.maximumAttemps,
-      status: status.find((x) => x.value == member.status).text,
-      isPrimaryKeyExist: false,
-    }));
-  };
+  const setModificationDetails = () => {
+    values.userID = Number(values.userID);
+    values.maximumAttemps = Number(values.maximumAttemps);
+    values.status = Number(values.status);
+    values.userType= Number(values.userType);
 
-  const handleCreateDialogOpen = () => {
-    setSelectedRecorde(null);
-    setErrorList([]);
-    setMode(0);
-    setOpenCreateDialog(true);
-  };
-
-  const handleViewDialogOpen = (item) => {
-    if (item != null) {
-      UserService.get(item.userID)
-        .then((res) => {
-          setSelectedRecorde(res.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      setMode(2);
-      setOpenCreateDialog(true);
+    if (true) {
+      values.createdUser = "admin";
+      values.createdMachine = localStorage.getItem("LoginMachineIp");
+      values.createdDateTime = new Date();
+      values.modifiedUser = "admin";
+      values.modifiedMachine = localStorage.getItem("LoginMachineIp");
+      values.modifiedDateTime = new Date();
     }
-  };
+  }
 
-  const onDelete = () => {
-    const lstRowId = [];
-    selectedRows.map((id) => {
-      let selectedRow = users.find((x) => x.userID === rows()[id].userID);
-      if (selectedRow != null) lstRowId.push(selectedRow);
-    });
+  const saveRecord = (e) => {
+    e.preventDefault();
 
-    if (lstRowId.length != 0) {
-      UserService.BulkRemove(lstRowId)
-        .then((res) => {
-          setConfirmDialog({
-            ...confirmDialog,
-            isOpen: false,
-          });
+console.log(values)
+    if (validate()) {
+      setModificationDetails();
 
-          if (res.data) {
-            Alert("Successfully Deleted.", 1);
-          } else {
-            Alert("Delete Faild.", 3);
-          }
-        })
+      let response;
+      (mode)
+        ? response = UserService.update(values)
+        : response = UserService.Usercreate(values)
+      response.then((res) => {
+        console.log("save",res)
+       // Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
+        Alert("User Registraion Success!");
+        setValues(initialRecordState);
+        //window.location.reload(false)
+      })
         .catch((e) => {
           console.log(e);
-          Alert(getMessage(303), 3);
+         // Alert((mode == 0) ? getMessage(301) : getMessage(302), 3);
+         Alert("User Registraion Faild!");
         });
     }
   };
 
   return (
     <>
-      <Card sx={{ m: 5, marginTop: 2 }}>
-        <CardHeader title={fromName}></CardHeader>
+      <Card>
+        <CardHeader
+          title="Customer Registration"
+          sx={{ paddingBottom: 1, paddingTop: 1 }}
+        ></CardHeader>
+        <Divider />
         <CardContent>
-          <GridAddButton
-            fromName={fromName}
-            handleCreateDialogOpen={handleCreateDialogOpen}
-          />
+        
+      <form noValidate autoComplete="on" onSubmit={saveRecord}>
+      <Grid container item spacing={0} md={5} xs={12}>
 
-          <DeleteButton
-            canDelete={canDelete}
-            setConfirmDialog={setConfirmDialog}
-            onDelete={onDelete}
-          />
-
-          <br />
-          <br />
-
-          <CheckBoxGrid
-            rows={rows()}
-            columns={columns}
-            pageSize={10}
-            rowsPerPageOptions={[5]}
-            setCanDelete={setCanDelete}
-            setSelectedRows={setSelectedRows}
-            handleViewDialogOpen={handleViewDialogOpen}
-            isCheckBoxTable={false}
-          />
-
-          <PopupFrom
-            openDialog={openCreateDialog}
-            setOpenDialog={setOpenCreateDialog}
-            title={fromName}
-            mode={mode}
-            setMode={setMode}
-            maxWidth="md"
-          >
-            <CreateUserManagement
-              setOpenDialog={setOpenCreateDialog}
-              mode={mode}
-              selectedRecorde={selectedRecorde}
-              users ={users}
+        <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>User Name</Typography>
+            </Grid>
+          <Grid item xs={4}>
+            <TextField
+              margin="dense"
+              name="userName"
+              type="text"
+              InputProps={{ sx: { height: 28, fontSize: 14 } }}
+              fullWidth
+              variant="outlined"
+              value={values.userName}
+              onChange={handleInputChange}
+              {...(errors.userName && { error: true, helperText: errors.userName })}
+              disabled={false }
+              required={true}
+              inputProps={{ maxLength: 250 }}
             />
-          </PopupFrom>
+          </Grid>
+          </Grid>
 
-          <ConfirmDialog
-            openDialog={confirmDialog}
-            setOpenDialog={setConfirmDialog}
-            selectedRecorde={selectedRecorde}
-          ></ConfirmDialog>
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>Password</Typography>
+            </Grid>
+          <Grid item xs={4}>
+            <TextField
+              margin="dense"
+              name="password"
+              type="password"
+              InputProps={{ sx: { height: 28, fontSize: 14 } }}
+              fullWidth
+              variant="outlined"
+              value={values.password}
+              onChange={handleInputChange}
+              {...(errors.password && { error: true, helperText: errors.password })}
+              disabled={false}
+              required={true}
+              inputProps={{ maxLength: 50 }}
+            />
+          </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>User Type</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <SmallCommonAutocomplete
+              mode={mode}
+              fieldName="userType"
+              value={values.userType}
+              options={DefineValues.userType()}
+              handleSelectChange={handleSelectChange}
+              errors={errors.userType}
+              disabled={true}
+            />
+          </Grid>
+          </Grid>
+        
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>Email</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <TextField
+              margin="dense"
+              name="email"
+              type="text"
+              InputProps={{ sx: { height: 28, fontSize: 14 } }}
+              fullWidth
+              variant="outlined"
+              value={values.email}
+              onChange={handleInputChange}
+              {...(errors.email && { error: true, helperText: errors.email })}
+              disabled={(mode != 2) ? false : true}
+              inputProps={{ maxLength: 250 }}
+            />
+          </Grid>
+          </Grid>
+
+         
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>Mobile</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <TextField
+            required
+              margin="dense"
+              name="mobileNo"
+              type="number"
+              InputProps={{ sx: { height: 28, fontSize: 14 } }}
+              fullWidth
+              variant="outlined"
+              value={values.mobileNo}
+              onChange={handleInputChange}
+              {...(errors.mobileNo && {
+                error: true,
+                helperText: errors.mobileNo,
+              })}
+              disabled={(mode != 2) ? false : true}
+              onInput={(e) => {
+                e.target.value = e.target.value.toString().slice(0, 10)
+              }}
+
+            />
+          </Grid>
+          </Grid>
+
+         
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              <Typography sx={{ fontSize: "14px" }}>Status</Typography>
+            </Grid>
+            <Grid item xs={4}>
+            <SmallCommonAutocomplete
+
+              mode={mode}
+              fieldName="status"
+              value={values.status}
+              options={DefineValues.userStatus()}
+              handleSelectChange={handleSelectChange}
+              errors={errors.status}
+              disabled={(mode != 2) ? false : true}
+            />
+          </Grid>
+          </Grid>
+          <Grid item xs={12} sx={{ paddingBottom: "2px", display: "flex" }}>
+            <Grid item xs={4} container direction="row" alignItems="center">
+              
+            </Grid>
+          <Grid item xs={4}>
+          <FormFooterButton
+          mode={mode}
+          isReset={isReset}
+          setIsReset={setIsReset}
+          isVisibalReset={false}
+          sx={{paddingRight: "0px"}}
+        />
+          </Grid>
+          </Grid>
+        </Grid>
+
+
+      </form>
         </CardContent>
       </Card>
+
+
     </>
   );
 }
+
