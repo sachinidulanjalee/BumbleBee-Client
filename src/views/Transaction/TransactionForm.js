@@ -6,22 +6,20 @@ import * as DefineValues from "../../common/DefineValues";
 import Alert from "../../common/alert";
 import FormFooterButton from "../../components/FormFooterButton";
 import getMessage from "../../common/Messages";
-import { CreateCategory } from "../ProductCategory/ProductCategoryForm";
+import { CreateProduct } from "../Product/ProductForm";
 import CommonAutocomplete from "../../components/Autocomplete/CommonAutocomplete";
 import FormAddButton from "../../components/FormAddButton";
 import PopupFrom from "../../components/PopupFrom";
-import ProductService from "../../services/ProductService";
-import Switch from "../../components/Switch";
+import TransactionService from "../../services/TransactionService";
 
-var customerId= localStorage.getItem("LoginUserID")
 const initialRecordState = {
-  customerId: Number(customerId),
+  transactionId:"",
   productId: "",
-  productName: "",
-  categoryId: "",
-  brand: "",
-  unitPrice: "",
-  status: DefineValues.status().find(x => x.text == "Active").value,
+  userId: "",
+  installmentPlan: "",
+  interestRate: "",
+  loanAmount: "",
+  usedAmount: "",
   createdUser: "",
   createdDateTime: "",
   createdUser: "",
@@ -31,25 +29,26 @@ const initialRecordState = {
   modifiedMachine: "",
 };
 
-export function CreateProduct({ setOpenDialog, mode, selectedProduct, product }) {
+export function CreateTransaction({ setOpenDialog, mode, selectedTransaction, transaction }) {
   const [isReset, setIsReset] = useState(false);
-  const [category, setCategory] = useState([]);
-  const [isOpenCategoryPopup, setIsOpenCategoryPopup] = useState(false);
-  const [switchedDate, setSwitchedDate] = useState(null);
+  const [product, setproduct] = useState([]);
+  const [user, setUser] = useState([]);
+  const [isOpenproductPopup, setIsOpenproductPopup] = useState(false);
+  const [isOpenUserPopup, setIsOpenUserPopup] = useState(false);
 
 
   const validate = () => {
     let temp = {};
-    temp.productName = 
-      values.productName !== "" ? "" : "This field is required";
-    temp.categoryId =
-      values.categoryId !== "" ? "" : "This field is required";
-    temp.brand =
-      values.brand !== "" ? "" : "This field is required";
-    temp.unitPrice =
-      values.unitPrice !== "" ? "" : "This field is required";
-    temp.status =
-      values.status !== "" ? "" : "This field is required";
+    temp.productId = 
+      values.productId !== "" ? "" : "This field is required";
+    temp.userId =
+      values.userId !== "" ? "" : "This field is required";
+    temp.installmentPlan =
+      values.installmentPlan !== "" ? "" : "This field is required";
+    temp.interestRate =
+      values.interestRate !== "" ? "" : "This field is required";
+    temp.loanAmount =
+      values.loanAmount !== "" ? "" : "This field is required";
 
 
     setErrors(temp);
@@ -68,21 +67,36 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
 
   useEffect(() => {
     resetForm();
-    getCategoryCode();
-    if (selectedProduct != null)
+    getProductCode();
+    getUser();
+    if (selectedTransaction != null)
       setValues({
-        ...selectedProduct,
+        ...selectedTransaction,
       });
-  }, [selectedProduct, isReset]);
+  }, [selectedTransaction, isReset]);
 
   useEffect(() => {
-    getCategoryCode();
-  }, [isOpenCategoryPopup]);
+    getProductCode();
+  }, [isOpenproductPopup]);
 
-  const getCategoryCode = () => {
-    ProductService.GetCategoryComboModel()
+  const getProductCode = () => {
+    TransactionService.GetProductComboModel()
       .then((response) => {
-        setCategory(response.data);
+        setproduct(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, [isOpenUserPopup]);
+
+  const getUser = () => {
+    TransactionService.getAllCustomerComboModel()
+      .then((response) => {
+        setUser(response.data);
       })
       .catch((e) => {
         console.log(e);
@@ -90,11 +104,13 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
   };
 
   const setModificationDetails = () => {
-    values.customerId = Number(values.customerId);
+    values.transactionId = Number(values.transactionId);
     values.productId = Number(values.productId);
-    values.categoryId = Number(values.categoryId);
-    values.unitPrice = Number(values.unitPrice);
-    values.status =Number(values.status);
+    values.userId = Number(values.userId);
+    values.installmentPlan = Number(values.installmentPlan);
+    values.interestRate=Number(values.interestRate);
+    values.loanAmount = Number(values.loanAmount);
+    values.usedAmount =Number(values.usedAmount);
 
     if (mode == 0) {
       values.createdUser = localStorage.getItem("LoginUserID");
@@ -116,8 +132,8 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
 console.log("create",values);
       let response;
       (mode) ?
-        response = ProductService.update(values) :
-        response = ProductService.create(values)
+        response = TransactionService.update(values) :
+        response = TransactionService.create(values)
 
       response.then((res) => {
         setOpenDialog(false);
@@ -139,86 +155,98 @@ console.log("create",values);
             <Stack direction="row" spacing={1} alignItems="center">
               <CommonAutocomplete
                 mode={mode}
-                fieldName="categoryId"
-                label="Category Code"
-                value={values.categoryId}
-                options={category}
+                fieldName="productId"
+                label="Product Id"
+                value={values.productId}
+                options={product}
                 handleSelectChange={handleSelectChange}
                 required={true}
-                errors={errors.categoryId}
-                disabled={mode == 0 ? false : true}
+                errors={errors.productId}
+                disabled={(mode != 2) ? false : true}
               />
 
               <FormAddButton
-                setCreateDialogOpen={setIsOpenCategoryPopup}
+                setCreateDialogOpen={setIsOpenproductPopup}
                 display={mode != 0 ? false : true}
               />
             </Stack>
           </Grid>
-          <Grid item xs={mode == 0 ? 11 : 12}>
-            <TextField
-              margin="dense"
-              label="Product Name"
-              name="productName"
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={values.productName}
-              onChange={handleInputChange}
-              {...(errors.productName && {
-                error: true,
-                helperText: errors.productName,
-              })}
-              disabled={mode != 2 ? false : true}
-              required={true}
-            />
+          <Grid item xs={(mode ==0)?11:12}>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <CommonAutocomplete
+                mode={mode}
+                fieldName="userId"
+                label="User Name"
+                value={values.userId}
+                options={user}
+                handleSelectChange={handleSelectChange}
+                required={true}
+                errors={errors.userId}
+                disabled={(mode != 2) ? false : true}
+              />
+            </Stack>
           </Grid>
           <Grid item xs={mode == 0 ? 11 : 12}>
-            <TextField
-              margin="dense"
-              label="Brand"
-              name="brand"
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={values.brand}
-              onChange={handleInputChange}
-              {...(errors.brand && {
-                error: true,
-                helperText: errors.brand,
-              })}
-              disabled={mode != 2 ? false : true}
-              required={true}
-            />
-          </Grid>
-          <Grid item xs={mode == 0 ? 11 : 12}>
-            <TextField
-              margin="dense"
-              label="Unit Price"
-              name="unitPrice"
-              type="number"
-              fullWidth
-              variant="outlined"
-              value={values.unitPrice}
-              onChange={handleInputChange}
-              {...(errors.unitPrice && {
-                error: true,
-                helperText: errors.unitPrice,
-              })}
-              disabled={mode != 2 ? false : true}
-            />
-          </Grid>
-    <Grid item xs={6}>
-            <Switch
+          <CommonAutocomplete
               mode={mode}
-              fieldName="status"
-              label="Status"
-              value={(Number(values.status) == Number(DefineValues.status().find(x => x.text == "Active").value)) ? true : false}
+              fieldName="installmentPlan"
+              label="InstallmentPlan"
+              value={values.installmentPlan}
+              options={DefineValues.InstallmentType()}
               handleSelectChange={handleSelectChange}
-              required={true}
-              errors={errors.status}
-              text={DefineValues.status().map(x => x.text)}
-              setSwitchedDate = {setSwitchedDate}
+              errors={errors.installmentPlan}
+              disabled={(mode != 2) ? false : true}
+            />
+          </Grid>
+          <Grid item xs={mode == 0 ? 11 : 12}>
+            <TextField
+              margin="dense"
+              label="Interest Rate"
+              name="interestRate"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={values.interestRate}
+              onChange={handleInputChange}
+              {...(errors.interestRate && {
+                error: true,
+                helperText: errors.interestRate,
+              })}
+              disabled={mode != 2 ? false : true}
+            />
+          </Grid>
+          <Grid item xs={mode == 0 ? 11 : 12}>
+            <TextField
+              margin="dense"
+              label="LoanAmount"
+              name="loanAmount"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={values.loanAmount}
+              onChange={handleInputChange}
+              {...(errors.loanAmount && {
+                error: true,
+                helperText: errors.loanAmount,
+              })}
+              disabled={mode != 2 ? false : true}
+            />
+          </Grid>
+          <Grid item xs={mode == 0 ? 11 : 12}>
+            <TextField
+              margin="dense"
+              label="UsedAmount"
+              name="usedAmount"
+              type="text"
+              fullWidth
+              variant="outlined"
+              value={values.usedAmount}
+              onChange={handleInputChange}
+              {...(errors.usedAmount && {
+                error: true,
+                helperText: errors.usedAmount,
+              })}
+              disabled={mode != 2 ? false : true}
             />
           </Grid>
         </Grid>
@@ -230,19 +258,20 @@ console.log("create",values);
         />
       </form>
       <PopupFrom
-        openDialog={isOpenCategoryPopup}
-        setOpenDialog={setIsOpenCategoryPopup}
-        title={"New Category"}
+        openDialog={isOpenproductPopup}
+        setOpenDialog={setIsOpenproductPopup}
+        title={"New Product"}
         mode={0}
         setMode={null}
       >
-        <CreateCategory
-          setOpenDialog={setIsOpenCategoryPopup}
+        <CreateProduct
+          setOpenDialog={setIsOpenproductPopup}
           mode={0}
           selectCategory={null}
-          category={category}
+          product={product}
         />
       </PopupFrom>
+    
     </>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MemberService from "../../services/MemberService";
+import CustomerService from "../../services/CustomerService";
 import { Card, CardContent, CardHeader, IconButton } from "@mui/material";
 import { CreateMemberFrom } from "./MemberForm";
 import { DeleteTwoTone } from "@material-ui/icons";
@@ -13,12 +13,12 @@ import DeleteButton from "../../components/DeleteButton";
 import CheckBoxGrid from "../../components/CheckBoxGrid";
 import getMessage from "../../common/Messages";
 
-const fromName = "Member";
+const fromName = "Customer Details";
 
 const columns = [
   {
-    field: "membershipCode",
-    headerName: "Membership Code",
+    field: "customerID",
+    headerName: "Customer ID",
     width: 200,
     align: "left",
     headerAlign: "left",
@@ -57,7 +57,7 @@ const columns = [
   },
 ];
 
-export default function MainClassification() {
+export default function Member() {
   const [errorList, setErrorList] = useState([]);
   const [members, setMembers] = useState([]);
   const [selectedRecorde, setSelectedRecorde] = useState(null);
@@ -89,7 +89,7 @@ export default function MainClassification() {
   }, [openCreateDialog, confirmDialog]);
 
   const getAllRecordes = () => {
-    MemberService.getAll()
+    CustomerService.getAll()
       .then((response) => {
         setMembers(response.data);
       })
@@ -101,8 +101,8 @@ export default function MainClassification() {
   const rows = () => {
     return members.map((member, key) => ({
       id: key,
-      membershipID: member.membershipID,
-      membershipCode: member.membershipCode,
+      customerID: member.customerID,
+      userID: member.userID,
       nicPassport: member.nicPassport,
       title: member.title,
       sex: member.sex,
@@ -124,7 +124,7 @@ export default function MainClassification() {
 
   const handleViewDialogOpen = (item) => {
     if (item != null) {
-      MemberService.get(item.membershipID)
+      CustomerService.get(item.customerID)
         .then((res) => {
           setSelectedRecorde(res.data);
         })
@@ -140,13 +140,13 @@ export default function MainClassification() {
     const lstRowId = [];
     selectedRows.map((id) => {
       let selectedRow = members.find(
-        (x) => x.membershipID === rows()[id].membershipID
+        (x) => x.customerID === rows()[id].customerID
       );
       if (selectedRow != null) lstRowId.push(selectedRow);
     });
 
     if (lstRowId.length != 0) {
-      MemberService.BulkRemove(lstRowId)
+      CustomerService.BulkRemove(lstRowId)
         .then((res) => {
           setConfirmDialog({
             ...confirmDialog,

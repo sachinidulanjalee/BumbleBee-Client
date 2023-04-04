@@ -47,7 +47,10 @@ import Dashboard from "../views/Dashboard/Dashboard";
 import Footer from "./Footer";
 import Product from"../views/Product/Product";
 import ProductCategory from"../views/ProductCategory/ProductCategory";
-import CustomerRegistration from"../views/CustomerRegistration/CustomerRegistration";
+import Customer from "../views/CustomerRegistration/Customer"
+import RegisterForm from "../views/CustomerRegistration/RegisterForm"
+import Transaction from "../views/Transaction/Transaction"
+
 
 const drawerWidth = 240;
 
@@ -345,7 +348,9 @@ export default function MiniDrawer() {
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Product" element={<Product />} />
           <Route path="/ProductCategory" element={<ProductCategory />} />
-          <Route path="/CustomerRegistration" element={<CustomerRegistration />} />
+          <Route path="/Customer" element={<Customer />} />
+          <Route path="/RegisterForm" element={<RegisterForm />} />
+          <Route path="/Transaction" element={<Transaction />} />
         </Routes>
       </Box>
     </Box>

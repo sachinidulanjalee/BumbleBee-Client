@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import ProductService from "../../services/ProductService";
+import TransactionService from "../../services/TransactionService";
 import { Card, CardContent, CardHeader, IconButton } from "@mui/material";
-import { CreateProduct } from "./ProductForm";
+import {CreateTransaction} from "./TransactionForm";
 import Alert from "../../common/alert";
 import ConfirmDialog from "../../common/ConfirmDialog";
 import PopupFrom from "../../components/PopupFrom";
@@ -10,62 +10,59 @@ import DeleteButton from "../../components/DeleteButton";
 import CheckBoxGrid from "../../components/CheckBoxGrid";
 import getMessage from "../../common/Messages";
 import * as DefineValues from "../../common/DefineValues";
-import UserService from "../../services/UserService";
 
 
-const customerId = localStorage.getItem("LoginUserID");
-const fromName = "Product";
+const fromName = "Loan Transaction";
+
 const columns = [
-
   {
-    field: "productId",
-    headerName: "Product Id",
+    field: "userName",
+    headerName: "User",
     width: 200,
     align: "left",
   },
   {
     field: "productName",
-    headerName: "Description",
+    headerName: "Product",
+    width: 200,
+    align: "left",
+  },
+  {
+    field: "installmentPlan",
+    headerName: "Installment Plan",
     minWidth: 200,
     flex: 1,
     align: "left",
   },
   {
-    field: "categoryName",
-    headerName: "Category",
+    field: "interestRate",
+    headerName: "InterestRate",
     minWidth: 200,
     flex: 1,
     align: "left",
   },
   {
-    field: "brand",
-    headerName: "Brand",
+    field: "loanAmount",
+    headerName: "Loan Amount",
     minWidth: 200,
     flex: 1,
     align: "left",
   },
   {
-    field: "unitPrice",
-    headerName: "Unit Price",
+    field: "usedAmount",
+    headerName: "UsedAmount",
     minWidth: 200,
     flex: 1,
     align: "left",
-    headerAlign: "left",
   },
-  {
-    field: "status",
-    headerName: "Status",
-    minWidth: 200,
-    flex: 1,
-    align: "left",
-    headerAlign: "left",
-  },
+
 ];
 
-export default function Product() {
+export default function Transaction() {
   const [errorList, setErrorList] = useState([]);
-  const [product, setProduct] = useState([]);
-  const [selectedProduct, setselectedProduct] = useState(null);
+  const [transactions, setTransaction] = useState([]);
+  const [selectedTransaction, setselectedTransaction] =
+    useState(null);
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState({
     isOpen: false,
@@ -75,8 +72,6 @@ export default function Product() {
   const [mode, setMode] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
   const [canDelete, setCanDelete] = useState(false);
-  const [status, setstatus] = useState(DefineValues.status());
-  const [userType, setUserType] = useState(3);
 
   useEffect(() => {
     var AccessFunctions = JSON.parse(
@@ -84,75 +79,53 @@ export default function Product() {
     );
 
     if (
-      AccessFunctions.filter((item) => item.FunctionURL === "/Product").length ===
-      0
+      AccessFunctions.filter(
+        (item) => item.FunctionURL === "/Transaction"
+      ).length === 0
     ) {
-      window.location.replace("/UnAuthorized");
+     // window.location.replace("/UnAuthorized");
     }
-    getProduct();
+    getTransactions();
   }, [openCreateDialog, confirmDialog]);
 
-  useEffect(() => {
-
-    console.log("user", customerId)
-    let response;
-    response = UserService.get(Number(customerId))
-    response.then((res) => {
-        setUserType(res.data.userType);
-      })
-
-  })
-  const getProduct = () => {
-    if(userType == 3){
-      //console.log("user", userType)
-      ProductService.getAll(customerId)
+  const getTransactions = () => {
+    TransactionService.getAll()
       .then((response) => {
-      console.log("data", response.data)
-
-        setProduct(response.data);
+        setTransaction(response.data);
       })
-    } 
-    else{
-    console.log("usetyper", userType)
-      ProductService.getAllCustomerProductGetAll()
-      .then((response) => {
-        console.log(response.data);
-        setProduct(response.data);
-      })
-    
       .catch((e) => {
         Alert(getMessage(400), 3);
       });
-    }
-
   };
 
   const rows = () => {
-    return product.map((product, key) => ({
+    return transactions.map((transaction, key) => ({
       id: key,
-      customerId: product.companyId,
-      productId: product.productId,
-      productName: product.productName,
-      categoryId: product.categoryId,
-      brand:product.brand,
-      categoryName:product.categoryName,
-      unitPrice: product.unitPrice,
-      status:DefineValues.status().find(x => x.value == product.status).text,
+      transactionId: transaction.transactionId,
+      userId: transaction.userId,
+      productId: transaction.productId,
+      productName:transaction.productName,
+      userName:transaction.userName,
+      installmentPlan: DefineValues.InstallmentType().find(x => x.value == transaction.installmentPlan).text,
+      interestRate: transaction.interestRate,
+      loanAmount:transaction.loanAmount,
+      usedAmount: transaction.usedAmount
     }));
   };
 
   const handleCreateDialogOpen = () => {
-    setselectedProduct(null);
+    setselectedTransaction(null);
     setErrorList([]);
     setMode(0);
     setOpenCreateDialog(true);
   };
 
-  const handleViewDialogOpen = (record) => {
-    if (record != null) {
-      ProductService.get(customerId, record.productId)
+  const handleViewDialogOpen = (recorde) => {
+    if (recorde != null) {
+      TransactionService.get(recorde.transactionId,recorde.productId, recorde.userId
+      )
         .then((res) => {
-          setselectedProduct(res.data);
+            setselectedTransaction(res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -166,16 +139,17 @@ export default function Product() {
     const lstRowId = [];
 
     selectedRows.map((id) => {
-      let selectedRow = product.find(
+      let selectedRow = transactions.find(
         (x) =>
+          x.transactionId === rows()[id].transactionId &&
           x.productId === rows()[id].productId &&
-          x.customerId === rows()[id].customerId
+          x.userId === rows()[id].userId
       );
       if (selectedRow != null) lstRowId.push(selectedRow);
     });
 
     if (lstRowId.length != 0) {
-      ProductService.BulkRemove(lstRowId)
+      TransactionService.BulkRemove(lstRowId)
         .then((res) => {
           setConfirmDialog({
             ...confirmDialog,
@@ -197,8 +171,8 @@ export default function Product() {
 
   return (
     <>
-      <Card>
-      <CardHeader title={fromName} sx={{ paddingBottom: 0 }}></CardHeader>
+      <Card sx={{ m: 5, marginTop: 2 }}>
+        <CardHeader title={fromName}></CardHeader>
         <CardContent>
           <GridAddButton
             fromName={fromName}
@@ -230,17 +204,17 @@ export default function Product() {
             mode={mode}
             setMode={setMode}
           >
-            <CreateProduct
+            <CreateTransaction
               setOpenDialog={setOpenCreateDialog}
               mode={mode}
-              selectedProduct={selectedProduct}
-              product={product}
+              selectedTransaction={selectedTransaction}
+              transactions={transactions}
             />
           </PopupFrom>
           <ConfirmDialog
             openDialog={confirmDialog}
             setOpenDialog={setConfirmDialog}
-            selectedRecorde={selectedProduct}
+            selectedRecorde={selectedTransaction}
           ></ConfirmDialog>
         </CardContent>
       </Card>

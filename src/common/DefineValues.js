@@ -303,3 +303,9 @@ export const userType = () => [
   { value: "2", text: "Admin" },
   { value: "3", text: "User" },
 ];
+export const InstallmentType = () => [
+  { value: "1", text: "3 Month" },
+  { value: "2", text: "6 Month" },
+  { value: "3", text: "12 Month" },
+  { value: "4", text: "24 Month" },
+];

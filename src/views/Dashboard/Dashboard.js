@@ -34,7 +34,7 @@ export default function Dashboard() {
         (item) => item.FunctionURL === "/Dashboard"
       ).length === 0
     ) {
-      window.location.replace("/UnAuthorized");
+      //window.location.replace("/UnAuthorized");
     }
 
     getMemberCount();

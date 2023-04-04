@@ -28,6 +28,11 @@ const GetCategoryComboModel = () => {
   return http.get(`Category/GetComboModel`);
 };
 
+const getAllCustomerProductGetAll = () => {
+  return http.get(`Product/AllCustomerProductGetAll`);
+};
+
+
 // eslint-disable-next-line
 export default {
   create,
@@ -36,5 +41,6 @@ export default {
   get,
   remove,
   BulkRemove,
-  GetCategoryComboModel
+  GetCategoryComboModel,
+  getAllCustomerProductGetAll
 };

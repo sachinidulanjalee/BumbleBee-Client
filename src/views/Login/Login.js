@@ -17,7 +17,6 @@ import LoginService from "../../services/LoginService";
 import getMessage from "../../common/Messages";
 import Alert from "../../common/alert";
 import ChnagePassword from "./ChnagePassword";
-
 import axios from 'axios'
 
 
@@ -30,8 +29,8 @@ function Copyright(props) {
       {...props}
     >
       {"Copyright © 2022 "}
-      <Link color="inherit" href="https://www.dmsswe.com/">
-        DMS Software Engineering (Pvt) Ltd.
+      <Link color="inherit" href="https://www.BumbleBee.com/">
+        BumBleBee (Pvt) Ltd.
       </Link>
       {"  All rights reserved."}
     </Typography>
@@ -47,6 +46,7 @@ const initialRecordState = {
 function Login() {
 
   const [ip, setIP] = useState('');
+
 
   //creating function to load ip address from the API
   const getData = async () => {
@@ -74,6 +74,8 @@ function Login() {
     getData();
 
   }, [IsOpenPasswordChangeDialog]);
+
+
 
   const LoginClick = (e) => {
     e.preventDefault();
@@ -118,18 +120,6 @@ function Login() {
       Alert("Invalid Username or Password.", 3);
     }
   };
-  // const LoginClick = (e) => {
-  //   e.preventDefault();
-  //   if (validate()) {
-  //     localStorage.setItem("LoginState", "true");
-  //     localStorage.setItem("LoginUserID", "1");
-  //     localStorage.setItem("LoginUserName", "userName");
-  //     localStorage.setItem("LoginMachineIp", "ip");
-  //     window.location.replace("/CompanyDashboard");
-  //   } else {
-  //     Alert("Invalid Username or Password.", 3);
-  //   }
-  // };
 
   return (
     <div>
@@ -239,7 +229,7 @@ function Login() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="/CustomerRegistration" variant="body2"  >
+                  <Link href="/RegisterForm" variant="body2"  >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>

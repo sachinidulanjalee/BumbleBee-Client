@@ -8,7 +8,7 @@ import CommonAutocomplete from "../../components/Autocomplete/CommonAutocomplete
 import AutocompleteSetNextCombo from "../../components/Autocomplete/AutocompleteSetNextCombo";
 import Switch from "../../components/Switch";
 import RadioButton from "../../components/RadioButton";
-import MemberService from "../../services/MemberService";
+import CustomerService from "../../services/CustomerService";
 import getMessage from "../../common/Messages";
 import getValidationRule from "../../common/ValidationRules";
 
@@ -16,8 +16,8 @@ import OutsideAPI from "../../services/OutsideAPI";
 
 
 const initialRecordState = {
-  membershipID: "",
-  membershipCode: "",
+  customerID: "",
+  userID: "",
   nicPassport: "",
   title: "",
   sex: "",
@@ -135,11 +135,11 @@ export function CreateMemberFrom({ setOpenDialog, mode, selectedRecorde }) {
     if (validate()) {
       setModificationDetails();
       
-      MemberService.getRecordeByFieldValue("NicPassport", values.nicPassport)
+      CustomerService.getRecordeByFieldValue("NicPassport", values.nicPassport)
         .then((member) => {
           let response;
           let recorde = member.data;
-          let isExist = (recorde != "") ? ((mode) ? recorde.membershipID != values.membershipID : true) : false;
+          let isExist = (recorde != "") ? ((mode) ? recorde.customerID != values.customerID : true) : false;
           
           if (isExist) {
             
@@ -149,8 +149,8 @@ export function CreateMemberFrom({ setOpenDialog, mode, selectedRecorde }) {
           else {
             
             (mode) ?
-              response = MemberService.update(values) :
-              response = MemberService.create(values)
+              response = CustomerService.update(values) :
+              response = CustomerService.create(values)
 
               
             response.then((res) => {
