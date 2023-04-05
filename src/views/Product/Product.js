@@ -76,7 +76,7 @@ export default function Product() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [canDelete, setCanDelete] = useState(false);
   const [status, setstatus] = useState(DefineValues.status());
-  const [userType, setUserType] = useState(3);
+  const [userType, setUserType] = useState(2);
 
   useEffect(() => {
     var AccessFunctions = JSON.parse(
@@ -89,8 +89,12 @@ export default function Product() {
     ) {
       window.location.replace("/UnAuthorized");
     }
-    getProduct();
   }, [openCreateDialog, confirmDialog]);
+
+  useEffect(() => {
+    
+    getProduct();
+  }, [userType]);
 
   useEffect(() => {
 
@@ -99,6 +103,8 @@ export default function Product() {
     response = UserService.get(Number(customerId))
     response.then((res) => {
         setUserType(res.data.userType);
+    console.log("setusertype", res.data.userType)
+
       })
 
   })

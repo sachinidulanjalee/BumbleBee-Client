@@ -23,7 +23,7 @@ export default function Footer(){
         
         <BottomNavigation style={style}>
             <div style={style}>
-                <h4>Copyright © 2021 DMS Software Engineering (Pvt) Ltd. All rights reserved.</h4>
+                <h4>Copyright © 2023 BumbleBee (Pvt) Ltd. All rights reserved.</h4>
                 <h3>v 1.0.0</h3>
             </div>
         </BottomNavigation>
