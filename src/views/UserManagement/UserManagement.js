@@ -46,6 +46,14 @@ const columns = [
     headerAlign: "left",
   },
   {
+    field: "userType",
+    headerName: "User type",
+    minWidth: 200,
+    flex: 1,
+    align: "left",
+    headerAlign: "left",
+  },
+  {
     field: "maximumAttemps",
     headerName: "Maximum Attemps",
     minWidth: 200,
@@ -77,6 +85,7 @@ export default function UserManagement() {
   const [selectedRows, setSelectedRows] = useState([]);
   const [canDelete, setCanDelete] = useState(false);
   const [status, setstatus] = useState(DefineValues.userStatus());
+  const [userType, setuserType] = useState(DefineValues.userType());
 
   useEffect(() => {
     var AccessFunctions = JSON.parse(
@@ -109,6 +118,7 @@ export default function UserManagement() {
       userName: member.userName,
       email: member.email,
       mobileNo: member.mobileNo,
+      userType: userType.find((x) => x.value == member.userType).text,
       expiryDate: moment(member.expiryDate).format("yyyy-MM-DD"),
       maximumAttemps: member.maximumAttemps,
       status: status.find((x) => x.value == member.status).text,

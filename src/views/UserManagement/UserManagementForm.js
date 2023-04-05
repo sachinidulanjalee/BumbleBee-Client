@@ -18,8 +18,9 @@ const initialRecordState = {
   password: "",
   email: "",
   mobileNo: "",
+  dateOfBirth:moment(new Date()).format("yyyy-MM-DD"),
   userType:"",
-  expiryDate: moment(new Date("01-01-0023")).format("yyyy-MM-DD"),
+  expiryDate: moment(new Date("12-31-0023")).format("yyyy-MM-DD"),
   maximumAttemps: "",
   status: DefineValues.userStatus().find(x => x.text == "New User").value,
   funcationIDs: [],
@@ -53,9 +54,34 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
     else
       return ""
   }
+  const getAge = (dob) => {
+    // get the date of birth as a string (YYYY-MM-DD)
+//const dob = "1990-01-01";
+
+// create a new Date object from the date of birth string
+const birthDate = new Date(dob);
+
+// get the current date
+const currentDate = new Date();
+
+// calculate the age in years by subtracting the birth year from the current year
+let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+// adjust the age based on the current month and day of the month
+if (currentDate.getMonth() < birthDate.getMonth() || 
+    (currentDate.getMonth() == birthDate.getMonth() && currentDate.getDate() < birthDate.getDate())) {
+    age--;
+}
+
+// log the age to the console
+console.log("age",age);
+return age;
+  }
+
 
   const validate = () => {
     let temp = {};
+    let age = getAge(values.dateOfBirth);
     temp.userName = values.userName !== "" ? isExistUserName() : "This field is required";
     temp.password = values.password !== "" ? "" : "This field is required";
     temp.userType = values.userType !== "" ? "" : "This field is required";
@@ -64,6 +90,8 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
     temp.mobileNo = values.mobileNo !== "" ? "" : "This field is required";
     temp.email = (values.email === "" || getValidationRule("email").test(values.email)) ?
       isExistEmail() : "Please Enter Valide Email";
+  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "Above 18+";
+
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
@@ -174,6 +202,28 @@ export function CreateUserManagement({ setOpenDialog, mode, selectedRecorde, use
               inputProps={{ maxLength: 50 }}
             />
           </Grid>
+          <Grid item xs={4} style={{ display: (mode != 0) ? "none" : "" }}>
+          <TextField
+                    required
+                    margin="dense"
+                    label="Date Of Birth"
+                    name="dateOfBirth"
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    value={moment(values.dateOfBirth).format("yyyy-MM-DD")}
+                    onChange={handleInputChange}
+                    {...(errors.dateOfBirth && {
+                      error: true,
+                      helperText: errors.dateOfBirth,
+                    })}
+                    disabled={(mode != 2) ? false : true}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.toString().slice(0, 10)
+                    }}
+
+                  />
+                  </Grid>
           <Grid item xs={4}>
             <CommonAutocomplete
               mode={mode}

@@ -43,6 +43,7 @@ const initialRecordState = {
   userID: "",
   userName: "",
   password: "",
+  dateOfBirth:"",
   email: "",
   mobileNo: "",
   userType: DefineValues.userType().find(x => x.text == "User").value,
@@ -61,14 +62,42 @@ export default function RegisterForm({ setOpenDialog, mode, selectedRecorde }) {
   const [users, setUsers] = useState();
   const [lstFuncation, setLstFuncation] = useState([]);
 
+  const getAge = (dob) => {
+    // get the date of birth as a string (YYYY-MM-DD)
+//const dob = "1990-01-01";
+
+// create a new Date object from the date of birth string
+const birthDate = new Date(dob);
+
+// get the current date
+const currentDate = new Date();
+
+// calculate the age in years by subtracting the birth year from the current year
+let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+// adjust the age based on the current month and day of the month
+if (currentDate.getMonth() < birthDate.getMonth() || 
+    (currentDate.getMonth() == birthDate.getMonth() && currentDate.getDate() < birthDate.getDate())) {
+    age--;
+}
+
+// log the age to the console
+console.log("age",age);
+return age;
+  }
 
   //creating function to load ip address from the API
 
   const validate = () => {
     let temp = {};
+    let age = getAge(values.dateOfBirth);
     temp.userName = values.userName !== "" ? "" : "This field is required";
     temp.password = values.password !== "" ? "" : "This field is required";
+    temp.dateOfBirth = age >= 18 && values.dateOfBirth !== "" ? "" : "This field is required";
+  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "Above 18+";
 
+
+console.log(temp)
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
   };
@@ -235,6 +264,26 @@ export default function RegisterForm({ setOpenDialog, mode, selectedRecorde }) {
                     disabled={false}
                     required={true}
                     inputProps={{ maxLength: 50 }}
+                  />
+                   <TextField
+                    required
+                    margin="dense"
+                    label="Date Of Birth"
+                    name="dateOfBirth"
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    value={moment(values.dateOfBirth).format("yyyy-MM-DD")}
+                    onChange={handleInputChange}
+                    {...(errors.dateOfBirth && {
+                      error: true,
+                      helperText: errors.dateOfBirth,
+                    })}
+                    disabled={(mode != 2) ? false : true}
+                    onInput={(e) => {
+                      e.target.value = e.target.value.toString().slice(0, 10)
+                    }}
+
                   />
                   <TextField
                     margin="dense"
