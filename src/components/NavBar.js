@@ -36,11 +36,6 @@ import {
   Dashboard as DashboardIcon,
 } from "@mui/icons-material";
 import { Route, Routes, Link } from "react-router-dom";
-import MainClassification from "../views/MainClassification/MainClassification";
-import Locations from "../views/Locations/Location";
-import LendingDetails from "../views/LendingDetails/LendingDetails";
-import SubClassification from "../views/SubClassification/SubClassification";
-import Book from "../views/Book/Book";
 import Member from "../views/Member/Member";
 import UserManagement from "../views/UserManagement/UserManagement";
 import Dashboard from "../views/Dashboard/Dashboard";
@@ -338,11 +333,6 @@ export default function MiniDrawer() {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Routes>
-          <Route path="/MainClassification" element={<MainClassification />} />
-          <Route path="/LendingDetails" element={<LendingDetails />} />
-          <Route path="/Locations" element={<Locations />} />
-          <Route path="/Book" element={<Book />} />
-          <Route path="/SubClassification" element={<SubClassification />} />
           <Route path="/Member" element={<Member />} />
           <Route path="/UserManagement" element={<UserManagement />} />
           <Route path="/Dashboard" element={<Dashboard />} />

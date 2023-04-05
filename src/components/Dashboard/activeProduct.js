@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
+import DashboardServicse from '../../services/DashboardServicse';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import BookOnlineRoundedIcon from '@mui/icons-material/BookOnlineRounded';
 import { alpha, styled } from '@mui/material/styles';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
-export const Book = ({availabaleBook}) => (
-  
+export const ActiveProduct =({activeProduct})=> (
+
+
   <Card
-  sx={{ height: '100%',borderRadius:5, backgroundColor: alpha('#F7D358', 0.30)}}
+    sx={{ height: '100%',borderRadius:5, backgroundColor: alpha('#BE81F7', 0.30)}}
   >
     <CardContent>
       <Grid
@@ -23,25 +25,25 @@ export const Book = ({availabaleBook}) => (
             variant="overline"
             fontWeight={900}
           >
-            Books
+            Products
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
             paddingLeft={1}
           >
-            {availabaleBook}
+            {activeProduct}
           </Typography>
         </Grid>
         <Grid item>
           <Avatar
             sx={{
-              backgroundColor: '#F7D358',
+              backgroundColor: '#BE81F7',
               height: 56,
               width: 56
             }}
           >
-            <MenuBookIcon />
+            <AddShoppingCartIcon />
           </Avatar>
         </Grid>
       </Grid>
@@ -54,7 +56,7 @@ export const Book = ({availabaleBook}) => (
       >
         <FiberManualRecordIcon sx={{ fontSize: 15 , color:'#86c56a'}} />
         <Typography
-          color="success"
+           color="success"
           sx={{
             mr: 1
           }}
@@ -65,11 +67,9 @@ export const Book = ({availabaleBook}) => (
           color="textSecondary"
           variant="caption"
           fontSize={14}
-          //fontWeight={700}
         >
-          Available
+          Active
         </Typography>
       </Box>
     </CardContent>
   </Card>);
-

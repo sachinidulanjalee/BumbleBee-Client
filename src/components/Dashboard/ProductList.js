@@ -18,12 +18,12 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SeverityPill } from '../severity-pill';
 import { style } from '@mui/system';
 import moment from "moment";
+import * as DefineValues from "../../common/DefineValues";
 
 
 
 
-
-export const ToBeRecievedBooks = ({toBeReceivedList}) => (
+export const ProductList = ({productList}) => (
   
 
   
@@ -31,20 +31,20 @@ export const ToBeRecievedBooks = ({toBeReceivedList}) => (
   <Card 
   sx={{borderRadius:5,minHeight:350,boxShadow:"0px 0px 0px 1px #D8D8D8"}}
   >
-    <CardHeader title="To Be Received" />
+    <CardHeader title="Product Details" />
     <PerfectScrollbar>
       <Box sx={{ minWidth: 600, }}>
       <Table>
           <TableHead>
             <TableRow>
               <TableCell>
-                Member
+                product Id
               </TableCell>
               <TableCell>
-                Book
+                Product
               </TableCell>
               <TableCell>
-                Date
+                Category
               </TableCell>
               <TableCell>
                 Status
@@ -52,27 +52,23 @@ export const ToBeRecievedBooks = ({toBeReceivedList}) => (
             </TableRow>
           </TableHead>
           <TableBody>
-            {toBeReceivedList.map((Receive) => (
+            {productList.map((Receive) => (
               <TableRow
                 hover
-                key={Receive.lendingID}
+                key={Receive.productId}
               >
                 <TableCell>
-                  {Receive.memberName}
+                  {Receive.productId}
                 </TableCell>
                 <TableCell>
-                  {Receive.bookName}
+                  {Receive.productName}
                 </TableCell>
                 <TableCell>
-                {moment(Receive.lendedDate).format("yyyy-MM-DD")}
+                {Receive.categoryName}
                 
                 </TableCell>
                 <TableCell>
-                <SeverityPill
-                    style={{backgroundColor:(moment(Receive.lendedDate).format("yyyy-MM-DD") === moment(new Date()).format("yyyy-MM-DD"))?"#BE81F7":"#FA5882"}} 
-                  >
-                    {(moment(Receive.lendedDate).format("yyyy-MM-DD") === moment(new Date()).format("yyyy-MM-DD"))?"Pending":" Late "}
-                  </SeverityPill>
+                {DefineValues.status().find(x => x.value == Receive.status).text}
                 </TableCell>
               </TableRow>
             ))}

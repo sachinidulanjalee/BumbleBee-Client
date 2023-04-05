@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
-import DashboardServicse from '../../services/DashboardServicse';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ProductionQuantityLimitsIcon from '@mui/icons-material/ProductionQuantityLimits';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import BookOnlineRoundedIcon from '@mui/icons-material/BookOnlineRounded';
 import { alpha, styled } from '@mui/material/styles';
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
 
-
-export const LendedBook =({lendedbook})=> (
-
-
+export const InactiveProduct = ({inactiveProduct}) => (
+  
   <Card
-    sx={{ height: '100%',borderRadius:5, backgroundColor: alpha('#BE81F7', 0.30)}}
+  sx={{ height: '100%',borderRadius:5, backgroundColor: alpha('#F7D358', 0.30)}}
   >
     <CardContent>
       <Grid
@@ -26,25 +23,25 @@ export const LendedBook =({lendedbook})=> (
             variant="overline"
             fontWeight={900}
           >
-            Books
+            Products
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
             paddingLeft={1}
           >
-            {lendedbook}
+            {inactiveProduct}
           </Typography>
         </Grid>
         <Grid item>
           <Avatar
             sx={{
-              backgroundColor: '#BE81F7',
+              backgroundColor: '#F7D358',
               height: 56,
               width: 56
             }}
           >
-            <SettingsEthernetIcon />
+            <ProductionQuantityLimitsIcon />
           </Avatar>
         </Grid>
       </Grid>
@@ -55,9 +52,9 @@ export const LendedBook =({lendedbook})=> (
           alignItems: 'center'
         }}
       >
-        <FiberManualRecordIcon sx={{ fontSize: 15 , color:'#F6BE00'}} />
+        <FiberManualRecordIcon sx={{ fontSize: 15 }} color="error" />
         <Typography
-          color="warning"
+           color="error"
           sx={{
             mr: 1
           }}
@@ -68,9 +65,11 @@ export const LendedBook =({lendedbook})=> (
           color="textSecondary"
           variant="caption"
           fontSize={14}
+          //fontWeight={700}
         >
-          Lended
+          Inactive
         </Typography>
       </Box>
     </CardContent>
   </Card>);
+

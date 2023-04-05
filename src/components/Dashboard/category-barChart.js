@@ -5,10 +5,10 @@ import DashboardServicse from '../../services/DashboardServicse';
 
 var x = [];
 var y = [];
-export function MainClassification (){
+export function Category (){
 
 
-     DashboardServicse.getCountByBookComboModel()
+     DashboardServicse.getCountByProductComboModel()
         .then((response) => {      
             x = response.data.map(element => 
                 element.name
@@ -27,7 +27,7 @@ export function MainClassification (){
 const option = {
   
     title: {
-        text: 'Books by Category',
+        text: 'Product by Category',
         left: 'left'
     },
     tooltip: {
@@ -64,7 +64,7 @@ const option = {
         {
 
             color:['#01DFD7'],
-            name: 'Books',
+            name: 'Product',
             type: 'line',
             data: y,
             markPoint: {

@@ -1,26 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Container, Box } from "@mui/material";
 import { Member } from "../../components/Dashboard/member";
-import { MainClassification } from "../../components/Dashboard/mainClassification-barChart";
+import { Category } from "../../components/Dashboard/category-barChart";
 import { PieChart } from "../../components/Dashboard/pieChart";
 import ReactECharts from 'echarts-for-react';
-import MemberService from "../../services/MemberService";
-import LendingDetailService from "../../services/LendingDetailService";
-import { LendedBook } from "../../components/Dashboard/lendedbook";
+import { ActiveProduct } from "../../components/Dashboard/activeProduct";
 import DashboardServicse from "../../services/DashboardServicse";
-import { Book } from "../../components/Dashboard/book";
-import { ReceiveCount } from "../../components/Dashboard/ReceiveCount";
-import { ToBeRecievedBooks } from "../../components/Dashboard/ToBeRecievedBooks";
+import { InactiveProduct } from "../../components/Dashboard/inactiveProduct";
+import { ProductCategory } from "../../components/Dashboard/ProductCategory";
+import { ProductList } from "../../components/Dashboard/ProductList";
 
 export default function Dashboard() {
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [memberCount, setMemberCount] = useState(0);
-  const [availabaleBook, setAvailabaleBook] = useState(0);
-  const [lendedbook, setLendedbook] = useState(0);
-  const [bookCountByStatus, setBookCountByStatus] = useState([]);
-  const [toReciveCount, setToRecieveCount] = useState(0);
-  const [toBeReceivedList, setToBeReceivedList] = useState([]);
+  const [inactiveProduct, setInactiveProduct] = useState(0);
+  const [activeProduct, setActiveProduct] = useState(0);
+  const [customerBygender, setCustomerBygender] = useState([]);
+  const [productCategory, setCategory] = useState(0);
+  const [productList, setProductList] = useState([]);
   const [bookClassification, setBookClassification] = useState([]);
 
   useEffect(() => {
@@ -38,40 +36,37 @@ export default function Dashboard() {
     }
 
     getMemberCount();
-    getAllBookCount();
-    getAllLendedBookCount();
+    getInactiveProductCount();
+    getAllProductCount();
     getCountByStatusComboModel();
-    getToRecieveBookCount();
-    getToBeReceivedList();
-    // getCountByBookComboModel();
+    getAllCategoryCount();
+    getProductList();
+  //  getCountByProductComboModel();
   }, [openCreateDialog]);
 
   const getMemberCount = () => {
     DashboardServicse.getMemberCount(setMemberCount)
   };
 
-  const getAllBookCount = () => {
-    DashboardServicse.getAllBookCount(setAvailabaleBook);
+  const getInactiveProductCount = () => {
+    DashboardServicse.getInactiveProductCount(setInactiveProduct);
   };
 
-  const getToRecieveBookCount = () => {
-    DashboardServicse.getToRecieveBookCount(setToRecieveCount);
+  const getAllCategoryCount = () => {
+    DashboardServicse.getAllCategoryCount(setCategory);
   };
 
-  const getAllLendedBookCount = () => {
-    DashboardServicse.getAllLendedBookCount(setLendedbook);
+  const getAllProductCount = () => {
+    DashboardServicse.getAllProductCount(setActiveProduct);
   };
 
   const getCountByStatusComboModel = () => {
-    DashboardServicse.getCountByStatusComboModel(setBookCountByStatus)
-    console.log("DB");
-    console.log(+bookCountByStatus);
+    DashboardServicse.getCountByStatusComboModel(setCustomerBygender)
   };
 
 
-  const getToBeReceivedList = () => {
-    DashboardServicse.getToBeReceivedList(setToBeReceivedList);
-    console.log(toBeReceivedList);
+  const getProductList = () => {
+    DashboardServicse.getProductList(setProductList);
   };
 
 
@@ -97,7 +92,16 @@ export default function Dashboard() {
               xs={12}
 
             >
-              <LendedBook lendedbook={lendedbook} />
+              <ActiveProduct activeProduct={activeProduct} />
+            </Grid>
+            <Grid
+              item
+              xl={3}
+              lg={3}civeCount
+              sm={6}
+              xs={12}
+            >
+              <InactiveProduct inactiveProduct={inactiveProduct} />
             </Grid>
             <Grid
               item
@@ -106,16 +110,7 @@ export default function Dashboard() {
               sm={6}
               xs={12}
             >
-              <Book availabaleBook={availabaleBook} />
-            </Grid>
-            <Grid
-              item
-              xl={3}
-              lg={3}
-              sm={6}
-              xs={12}
-            >
-              <ReceiveCount toReciveCount={toReciveCount} />
+              <ProductCategory productCategory={productCategory} />
             </Grid>
             <Grid
               item
@@ -135,7 +130,7 @@ export default function Dashboard() {
               xs={12}
               sx={{ marginTop: 3}}
             >
-              <MainClassification />
+              <Category />
             </Grid>
             
             
@@ -147,7 +142,7 @@ export default function Dashboard() {
               xs={12}
               sx={{ marginTop: 3 }}
             >
-              <PieChart bookCountByStatus={bookCountByStatus} />
+              <PieChart customerBygender={customerBygender} />
 
             </Grid>
             <Grid
@@ -158,7 +153,7 @@ export default function Dashboard() {
               xs={12}
               sx={{ marginTop: 3 }}
             >
-              <ToBeRecievedBooks toBeReceivedList={toBeReceivedList} />
+              <ProductList productList={productList} />
             </Grid>
             
           </Grid>

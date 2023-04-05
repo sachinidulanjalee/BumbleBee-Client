@@ -1,45 +1,45 @@
 import http from "../common/http-common";
 
-const getAllBookCount = (setFuncation) => {
-  http.get("Dashboard/GetAllBookCount")
+const getInactiveProductCount = (setFuncation) => {
+  http.get("Dashboard/GetInactiveProductCount")
     .then((response) => {
       setFuncation(response.data);
     })
     .catch((e) => { });
 };
 
-const getAllLendedBookCount = (setFuncation) => {
-  http.get("Dashboard/GetAllLendedBookCount")
+const getAllProductCount = (setFuncation) => {
+  http.get("Dashboard/GetAllProductCount")
     .then((response) => {
       setFuncation(response.data);
     })
     .catch((e) => { });
 };
 
+const getAllCategoryCount = (setFuncation) => {
+  http.get("Dashboard/GetAllCategoryCount")
+    .then((response) => {
+      setFuncation(response.data);
+    })
+    .catch((e) => { });
+};
 const getCountByStatusComboModel = () => {
   return http.get("Dashboard/GetCountByStatusComboModel")
 
 };
 
 const getMemberCount = (setFuncation) => {
-  http.get("Member/GetMemberCount")
+  http.get("Customer/GetMemberCount")
     .then((response) => {
       setFuncation(response.data);
     })
     .catch((e) => { });
 };
 
-const getToRecieveBookCount = (setFuncation) => {
-  http.get("LendingDetails/getToRecieveBookCount")
-    .then((response) => {
-      setFuncation(response.data);
-    })
-    .catch((e) => { });
-};
 
-const getToBeReceivedList = (setFuncation) =>
+const getProductList = (setFuncation) =>
 {
-  http.get("LendingDetails/getToBeReceivedList")
+  http.get("Product/AllCustomerProductGetAll")
   .then((response) => {
     setFuncation(response.data);
     
@@ -47,18 +47,18 @@ const getToBeReceivedList = (setFuncation) =>
   .catch((e) => {});
 };
 
-const getCountByBookComboModel = () => {
-  return http.get("Dashboard/GetCountByBookComboModel");
+const getCountByProductComboModel = () => {
+  return http.get("Dashboard/GetCountByProductComboModel");
 };
 
 
 // eslint-disable-next-line
 export default {
-  getAllBookCount,
-  getAllLendedBookCount,
+  getInactiveProductCount,
+  getAllProductCount,
   getMemberCount,
-  getToRecieveBookCount,
-  getToBeReceivedList,
+  getProductList,
   getCountByStatusComboModel,
-  getCountByBookComboModel,
+  getCountByProductComboModel,
+  getAllCategoryCount
 };

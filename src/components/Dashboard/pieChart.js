@@ -20,7 +20,7 @@ export function PieChart() {
 
     const option = {
         title: {
-          text: 'Books by Status',
+          text: 'Customer by Gender',
           left: 'left'
         },
         tooltip: {

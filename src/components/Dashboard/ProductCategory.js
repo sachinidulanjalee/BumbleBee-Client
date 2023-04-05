@@ -3,9 +3,8 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import PeopleIcon from '@mui/icons-material/PeopleOutlined';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { alpha, styled } from '@mui/material/styles';
-import ErrorIcon from '@mui/icons-material/Error';
-
-export const ReceiveCount = ({toReciveCount}) => (
+import CategoryIcon from '@mui/icons-material/Category';
+export const ProductCategory = ({productCategory}) => (
   <Card 
   sx={{ height: '100%',borderRadius:5, backgroundColor: alpha('#FA5882', 0.30)}}>
     <CardContent>
@@ -21,14 +20,14 @@ export const ReceiveCount = ({toReciveCount}) => (
             variant="overline"
             fontWeight={900}
           >
-            To Be Recieved
+            Category
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
             paddingLeft={1}
           >
-            {toReciveCount}
+            {productCategory}
           </Typography>
         </Grid>
         <Grid item>
@@ -39,7 +38,7 @@ export const ReceiveCount = ({toReciveCount}) => (
               width: 56
             }}
           >
-            <ErrorIcon />
+            <CategoryIcon />
           </Avatar>
         </Grid>
       </Grid>
@@ -50,9 +49,9 @@ export const ReceiveCount = ({toReciveCount}) => (
           pt: 2
         }}
       >
-        <FiberManualRecordIcon sx={{ fontSize: 15 }} color="error" />
+        <FiberManualRecordIcon sx={{ fontSize: 15 }} color="success" />
         <Typography
-          color="error"
+          color="success"
           sx={{
             mr: 1
           }}
@@ -64,7 +63,7 @@ export const ReceiveCount = ({toReciveCount}) => (
           variant="caption"
           fontSize={14}
         >
-          Pending Books
+          Active Category
         </Typography>
       </Box>
     </CardContent>
