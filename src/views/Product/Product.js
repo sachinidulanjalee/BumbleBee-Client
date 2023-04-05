@@ -96,6 +96,7 @@ export default function Product() {
     getProduct();
   }, [userType]);
 
+
   useEffect(() => {
 
     console.log("user", customerId)
@@ -155,6 +156,7 @@ export default function Product() {
   };
 
   const handleViewDialogOpen = (record) => {
+  if(userType == 3){
     if (record != null) {
       ProductService.get(customerId, record.productId)
         .then((res) => {
@@ -163,6 +165,7 @@ export default function Product() {
         .catch((e) => {
           console.log(e);
         });
+      }
       setMode(2);
       setOpenCreateDialog(true);
     }
@@ -206,11 +209,13 @@ export default function Product() {
       <Card>
       <CardHeader title={fromName} sx={{ paddingBottom: 0 }}></CardHeader>
         <CardContent>
-          <GridAddButton
+       {userType === 3 &&    <> 
+       <GridAddButton
             fromName={fromName}
             handleCreateDialogOpen={handleCreateDialogOpen}
           />
-
+          </>}
+ 
           <DeleteButton
             canDelete={canDelete}
             setConfirmDialog={setConfirmDialog}
@@ -219,7 +224,6 @@ export default function Product() {
 
           <br />
           <br />
-
           <CheckBoxGrid
             rows={rows()}
             columns={columns}
@@ -229,6 +233,7 @@ export default function Product() {
             setSelectedRows={setSelectedRows}
             handleViewDialogOpen={handleViewDialogOpen}
           />
+          
           <PopupFrom
             openDialog={openCreateDialog}
             setOpenDialog={setOpenCreateDialog}
