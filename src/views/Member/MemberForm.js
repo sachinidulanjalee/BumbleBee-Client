@@ -184,7 +184,7 @@ export function CreateMemberFrom({ setOpenDialog, mode, selectedRecorde }) {
 
               onChange={handleInputChange}
               {...(errors.nicPassport && { error: true, helperText: errors.nicPassport })}
-              disabled={(mode != 2) ? false : true}
+              disabled={(mode == 0) ? false : true}
               value={values.nicPassport}
               required={true}
               inputProps={{ maxLength: 13, }}
@@ -478,6 +478,7 @@ export function CreateMemberFrom({ setOpenDialog, mode, selectedRecorde }) {
           mode={mode}
           isReset={isReset}
           setIsReset={setIsReset}
+          isVisibalReset={false}
         />
       </form>
     </>

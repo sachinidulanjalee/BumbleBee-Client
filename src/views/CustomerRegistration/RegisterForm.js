@@ -94,7 +94,7 @@ return age;
     temp.userName = values.userName !== "" ? "" : "This field is required";
     temp.password = values.password !== "" ? "" : "This field is required";
     temp.dateOfBirth = age >= 18 && values.dateOfBirth !== "" ? "" : "This field is required";
-  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "Above 18+";
+  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "This field is required & you must be 18+";
 
 
 console.log(temp)
@@ -340,7 +340,7 @@ console.log(temp)
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                   >
-                    Sign In
+                    Sign Up
                   </Button>
 
 

@@ -90,7 +90,7 @@ return age;
     temp.mobileNo = values.mobileNo !== "" ? "" : "This field is required";
     temp.email = (values.email === "" || getValidationRule("email").test(values.email)) ?
       isExistEmail() : "Please Enter Valide Email";
-  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "Above 18+";
+  if(typeof age === 'number' && age <= 18) temp.dateOfBirth = values.dateOfBirth !== ""  && "This field is required & you must be 18+";
 
     setErrors(temp);
     return Object.values(temp).every((x) => x === "");
@@ -191,7 +191,7 @@ return age;
               margin="dense"
               label="Password"
               name="password"
-              type="text"
+              type="password"
               fullWidth
               variant="outlined"
               value={values.password}
@@ -202,7 +202,7 @@ return age;
               inputProps={{ maxLength: 50 }}
             />
           </Grid>
-          <Grid item xs={4} style={{ display: (mode != 0) ? "none" : "" }}>
+          <Grid item xs={4}>
           <TextField
                     required
                     margin="dense"

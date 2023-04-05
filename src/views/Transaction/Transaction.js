@@ -174,10 +174,10 @@ export default function Transaction() {
       <Card sx={{ m: 5, marginTop: 2 }}>
         <CardHeader title={fromName}></CardHeader>
         <CardContent>
-          <GridAddButton
+          {/* <GridAddButton
             fromName={fromName}
             handleCreateDialogOpen={handleCreateDialogOpen}
-          />
+          /> */}
 
           <DeleteButton
             canDelete={canDelete}
@@ -196,6 +196,7 @@ export default function Transaction() {
             setCanDelete={setCanDelete}
             setSelectedRows={setSelectedRows}
             handleViewDialogOpen={handleViewDialogOpen}
+            isCheckBoxTable={false}
           />
           <PopupFrom
             openDialog={openCreateDialog}

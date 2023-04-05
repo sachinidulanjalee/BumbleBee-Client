@@ -175,10 +175,11 @@ export default function Member() {
       <Card sx={{ m: 5, marginTop: 2 }}>
         <CardHeader title={fromName}></CardHeader>
         <CardContent>
-          <GridAddButton
+          {/* <GridAddButton
             fromName={fromName}
             handleCreateDialogOpen={handleCreateDialogOpen}
-          />
+            
+          /> */}
 
           <DeleteButton
             canDelete={canDelete}

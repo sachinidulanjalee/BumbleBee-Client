@@ -221,7 +221,7 @@ export default function Customer({ setOpenDialog, mode, selectedRecorde }) {
               
               setOpenDialog(false);
              // Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
-              Alert("User Registraion Success!");
+              Alert("profile Updated Success!");
               setValues(initialRecordState);
             })
           }
@@ -255,7 +255,7 @@ export default function Customer({ setOpenDialog, mode, selectedRecorde }) {
                   disabled={(mode != 2) ? false : true}
                   value={values.nicPassport}
                   required={true}
-                  inputProps={{ maxLength: 13, }}
+                  inputProps={{ maxLength: 10, }}
                 />
               </Grid>
               <Grid item xs={4}>
