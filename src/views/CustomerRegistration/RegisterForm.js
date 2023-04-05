@@ -194,7 +194,7 @@ console.log(temp)
               sm={4}
               md={8}
               sx={{
-                backgroundImage: `url(${process.env.PUBLIC_URL + "/img/PayLater.jpg"
+                backgroundImage: `url(${process.env.PUBLIC_URL + "/img/BuyNow_payLater.jpg"
                   })`,
                 backgroundRepeat: "no-repeat",
                 backgroundColor: (t) =>

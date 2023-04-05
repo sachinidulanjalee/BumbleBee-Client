@@ -9,6 +9,11 @@ import DashboardServicse from "../../services/DashboardServicse";
 import { InactiveProduct } from "../../components/Dashboard/inactiveProduct";
 import { ProductCategory } from "../../components/Dashboard/ProductCategory";
 import { ProductList } from "../../components/Dashboard/ProductList";
+import UserService from "../../services/UserService";
+import CssBaseline from "@mui/material/CssBaseline";
+
+var userID = localStorage.getItem("LoginUserID")
+
 
 export default function Dashboard() {
 
@@ -20,6 +25,17 @@ export default function Dashboard() {
   const [productCategory, setCategory] = useState(0);
   const [productList, setProductList] = useState([]);
   const [bookClassification, setBookClassification] = useState([]);
+  const [userType, setUserType] = useState(3);
+
+  useEffect(() => {
+    console.log("user", userID)
+    let response;
+    response = UserService.get(Number(userID))
+    response.then((res) => {
+        console.log('resdata',res.data)   
+        setUserType(res.data.userType);
+      })
+  }, [])
 
   useEffect(() => {
 
@@ -72,6 +88,7 @@ export default function Dashboard() {
 
   return (
     <>
+    {userType !== 3 ?
       <Box
         component="main"
         sx={{
@@ -159,7 +176,31 @@ export default function Dashboard() {
           </Grid>
         </Container>
       </Box>
-
+      :
+      <Box>
+        <Grid container component="main" sx={{ height: "100vh" }}>
+            <CssBaseline />
+            <Grid
+              item
+              xs={false}
+              sm={8}
+              md={12}
+              sx={{
+                backgroundImage: `url(${
+                  process.env.PUBLIC_URL + "/img/Best-Apps-like-Klarna-1.webp"
+                })`,
+                backgroundRepeat: "no-repeat",
+                backgroundColor: (t) =>
+                  t.palette.mode === "light"
+                    ? t.palette.grey[50]
+                    : t.palette.grey[900],
+                backgroundSize: "100%",
+                backgroundPosition: "center",
+              }}
+            />
+            </Grid>
+      </Box>
+}
 
     </>
   );
