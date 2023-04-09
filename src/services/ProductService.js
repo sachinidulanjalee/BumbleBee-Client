@@ -5,7 +5,7 @@ const create = (data) => {
 };
 
 const update = (data) => {
-  return http.post("Product/Edit", data);
+  return http.put("Product/Edit", data);
 };
 
 const getAll = (customerId) => {
