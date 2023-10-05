@@ -124,7 +124,7 @@ export default function Member() {
 
   const handleViewDialogOpen = (item) => {
     if (item != null) {
-      CustomerService.get(item.customerID)
+      CustomerService.get(item.userID)
         .then((res) => {
           setSelectedRecorde(res.data);
         })

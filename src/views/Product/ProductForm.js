@@ -113,23 +113,23 @@ export function CreateProduct({ setOpenDialog, mode, selectedProduct, product })
     
     if (validate()) {
       setModificationDetails();
-console.log("create",values);
-      let response;
-      (mode) ?
-        response = ProductService.update(values) :
-        response = ProductService.create(values)
+  console.log("update",values);
+  let response;
+  (mode) ?
+  response = ProductService.update(values) :
+  response = ProductService.create(values)
 
-      response.then((res) => {
-        setOpenDialog(false);
-        Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
-        setValues(initialRecordState);
-      })
-        .catch((e) => {
-          console.log(e);
-          Alert((mode == 0) ? getMessage(301) : getMessage(302), 3);
-        });
-    }
+  response.then((res) => {
+  setOpenDialog(false);
+  Alert((mode == 0) ? getMessage(201) : getMessage(202), 1);
+  setValues(initialRecordState);
+})
+  .catch((e) => {
+    console.log(e);
+    Alert((mode == 0) ? getMessage(301) : getMessage(302), 3);
+  });
   };
+};
 
   return (
     <>
