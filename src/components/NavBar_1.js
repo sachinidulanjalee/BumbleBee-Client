@@ -212,7 +212,7 @@ export default function MiniDrawer() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 11 }}>
-          Bumble bee: Buy first and pay later
+           Breeze : Psyche Eval 
           </Typography>
           <Box
             sx={{
