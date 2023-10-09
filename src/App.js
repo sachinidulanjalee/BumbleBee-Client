@@ -1,27 +1,31 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import NavBar from "./components/NavBar";
-import Login from "./views/Login/Login";
-import UnAuthorized from "./views/UnAuthorized/UnAuthorized";
-import RegisterForm from "./views/CustomerRegistration/RegisterForm";
-
-
+import HomePage from "./components/HomePage/HomePage.jsx";
+import Footer from "./components/footer/Footer";
+import AboutUs from "./components/about-us/AboutUs";
+import PTSD from "./components/PTSD/PTSD";
+import Disoders from "./components/Disoders/Disoders";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Navbar from "./components/NavBar/NavBar";
+import Starter from "./app/Home/Index";
 
 function App() {
-  useEffect(() => {});
+
   
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+        <Navbar />
         <Routes>
-          <Route path="/Login" element={<Login />} />
-          <Route path="/RegisterForm" element={<RegisterForm />} />
-          <Route path="/UnAuthorized" element={<UnAuthorized />} />
-          <Route path="*" element={<NavBar />} />
+          <Route index element={<Starter />}></Route>
+          <Route path="/" element={<HomePage/>}></Route>
+          <Route path="/disoders" element={<Disoders/>}></Route>
+          <Route path="/aboutus" element={<AboutUs/>}></Route>
+          <Route path="/PTSD" element={<PTSD/>}></Route>
         </Routes>
       </BrowserRouter>
-    </>
+
+
+
   );
 }
 
