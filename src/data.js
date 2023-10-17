@@ -36,6 +36,11 @@ export const navItems = [
     id: 2,
     name: "Mental Health",
     path: "*",
+    submenu: [{
+      id: 1,
+      name: "Professional",
+      path: "/Professional"
+    },]
   },
   {
     id: 3,
@@ -44,22 +49,22 @@ export const navItems = [
     submenu: [{
       id: 1,
       name: "The Basic Test",
-      path: "/menu1"
+      path: "/BasicTest"
     },
     {
       id: 2,
       name: "Bipolar Disorder",
-      path: "/menu2"
+      path: "/BipolarDisorder"
     },
     {
       id: 3,
       name: "Generalized Anxiety Disorder",
-      path: "/menu2"
+      path: "/GAD"
     },
     {
       id: 4,
       name: "Major Depression",
-      path: "/menu2"
+      path: "/MajorDepression"
     },
     {
       id: 5,

@@ -51,6 +51,8 @@ const HomePage = () => {
         </Typography>
         {/* <SearchNav /> */}
       </Box>
+
+
     </Container>
   );
 };

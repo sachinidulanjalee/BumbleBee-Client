@@ -1,29 +1,46 @@
 import { useState } from "react";
-
+import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import { Box, Drawer, ListItem, Typography } from "@mui/material";
+import { Box, Drawer, IconButton, ListItem, Typography, Modal, TextField,Button,url } from "@mui/material";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import logo from "../../assets/main/logo.png";
 import userAvatar from "../../assets/main/user-avatar.svg";
 import { navItems } from "../../data.js";
-import { Login } from "@mui/icons-material";
+import { Login, LoginOutlined, LoginSharp } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
 import Menu from "@mui/material/Menu";
-import Button from "@mui/material/Button";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { useFormNew } from "../../hooks/useFormNew";
+import LoginService from "../../services/LoginService";
+
+
+const theme = createTheme();
+const initialRecordState = {
+  userName: "",
+  password: "",
+};
 
 const Navbar = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const [openLoginModal, setOpenLoginModal] = useState(false);
   const navigate = useNavigate();
 
   const navigateToComponent = (path) => {
     // Use the history.push method to navigate to the desired route
     navigate(path);
   };
+  const handleLoginModalOpen = () => {
+    setOpenLoginModal(true);
+  };
 
+
+  const handleLoginModalClose = () => {
+    setOpenLoginModal(false);
+  };
   //Submenu
   const [anchorEl, setAnchorEl] = useState(null);
   const [submenuItems, setSubmenuItems] = useState([]);
@@ -44,6 +61,40 @@ const Navbar = () => {
   const navigateSubmenu = (path) => {
     setAnchorEl(null);
     navigateToComponent(path);
+  };
+
+  const validate = () => {
+    let temp = {};
+    temp.userName = values.userName !== "" ? "" : "This field is required";
+    temp.password = values.password !== "" ? "" : "This field is required";
+
+    setErrors(temp);
+    return Object.values(temp).every((x) => x === "");
+  };
+
+  const { values, setValues, errors, setErrors, handleInputChange, resetForm } =
+    useFormNew(initialRecordState, true, validate);
+
+  const [IsOpenPasswordChangeDialog, setIsOpenPasswordChangeDialog] =
+    useState(false);
+
+  const LoginClick =  async (e) => {
+    e.preventDefault();
+    if (validate()) {
+
+      try {
+        const response = await LoginService.Login(values);
+        if (response.data.message === 'Login successful') {
+          // Handle successful login (e.g., redirect to a new page)
+        } else {
+          // Handle failed login (e.g., show an error message)
+          alert("Login failed. Please check your credentials.");
+        }
+      } catch (error) {
+        // Handle errors, e.g., network errors or errors from the server
+        console.error("There was a problem with the login operation:", error);
+      }
+    }
   };
 
   return (
@@ -154,20 +205,95 @@ const Navbar = () => {
                 opacity: "0.5",
               }}
             >
-              Holla,
-            </Typography>
-            <Typography
-              sx={{
-                fontWeight: "600",
-                fontSize: "14px",
-                lineHeight: "21px",
-                color: "#fff",
-              }}
-            >
-              Ales Nesetril
+              Hello,
+              <IconButton onClick={handleLoginModalOpen}>
+                <Login />
+              </IconButton>
+              Login
             </Typography>
           </Box>
-          <img src={userAvatar} alt="avatar" style={{ cursor: "pointer" }} />
+          <Modal
+            open={openLoginModal}
+            onClose={handleLoginModalClose}
+            aria-labelledby="login-modal-title"
+            aria-describedby="login-modal-description"
+          >
+            <Box
+              sx={{
+                position: "absolute",
+                width: 500,
+                height: 'auto',
+                bgcolor: "background.paper",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 2,
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              <form noValidate onSubmit={LoginClick} action="">
+              <Typography component="h2" variant="h5">
+                      Sign in
+                    </Typography>
+                <Box noValidate autoComplete="on" sx={{ mt: 1 }}>
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="User Name"
+                    name="userName"
+                    autoComplete="email"
+                    onChange={handleInputChange}
+                    {...(errors.userName && {
+                      error: true,
+                      helperText: errors.userName,
+                    })}
+                    autoFocus
+                  />
+
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    onChange={handleInputChange}
+                    {...(errors.password && {
+                      error: true,
+                      helperText: errors.password,
+                    })}
+                    autoComplete="current-password"
+                  />
+
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Sign In
+                  </Button>
+
+                  <Grid container>
+                    <Grid item xs>
+                      <Link href="#" variant="body2">
+                        Forgot password?
+                      </Link>
+                    </Grid>
+                    <Grid item>
+                      <Link href="/SignUp" variant="body2">
+                        {"Don't have an account? Sign Up"}
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </form>
+            </Box>
+          </Modal>
         </Box>
         <MenuIcon
           sx={{
@@ -293,4 +419,4 @@ const Navbar = () => {
     </AppBar>
   );
 };
-export default Navbar;
+export default Navbar;

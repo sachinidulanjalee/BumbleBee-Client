@@ -36,12 +36,12 @@ const AboutUs = () => {
             sx={{
               fontFamily: "Poppins",
               fontWeight: "600",
-              fontSize: "32px",
+              fontSize: "40px",
               lineHeight: "48px",
               color: "#161414",
               textAlign: {
                 xs: "center",
-                md: "left",
+                md: "center",
               },
             }}
           >
@@ -57,12 +57,23 @@ const AboutUs = () => {
               my: 4,
             }}
           >
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            a sapien justo. Nulla facilisis tristique imperdiet. Nullam a
-            placerat odio. Sed in ex augue. Aliquam porta consectetur lorem sit
-            amet ultrices. Class aptent taciti sociosqu ad litora torquent per
-            conubia nostra, per inceptos himenaeos.
-            
+            <h1>Who We Are?</h1>
+            <p> We are a non-profitable organization purely intend to help people maintaining their mental health.</p>
+            <h1>What We Do?</h1>
+            <p>We provide efficient and modern tests to allow people to get evaluated them self mentally.</p>
+
+            <h2 >Terms And Conditions.</h2>
+            <div>
+              <ul >
+                <li class="symptomsLsit">This system is not a diagnostic tool.</li>
+                <li class="symptomsLsit">This system is an evaluation platform only.</li>
+                <li class="symptomsLsit">Test results are purely depend on the user responses.</li>
+                <li class="symptomsLsit">Registered professionals have been volunteered for help people in need.
+                  <br />But we don't guarantee
+                  the professional services will be free of charge. <br />It is to be decided by the relevant professional.</li>
+              </ul>
+            </div>
+
           </Typography>
           <SecondaryButton text="Read more" />
         </Box>
