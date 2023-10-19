@@ -10,11 +10,11 @@ const Mdepression = (data) => {
 };
 
 const BipolarDisorder = (data) => {
-  return http.post("/submit_BipolarDisorder", data);
+  return http.post("/submit_bipolarDisorder", data);
 };
 
 const GAD = (data) => {
-  return http.post("/submit_GeneralizedAnxiety", data);
+  return http.post("/submit_generalizedAnxiety", data);
 };
 
 

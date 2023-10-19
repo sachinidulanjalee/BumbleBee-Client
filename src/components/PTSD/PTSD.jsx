@@ -9,7 +9,18 @@ import { Box, Container, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import SendIcon from "@mui/icons-material/Send";
 import AnalysisService from "../../services/analysisservice";
-import { color } from "@mui/system";
+import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale, Title } from "chart.js";
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
 
 const questions = [
     {
@@ -157,7 +168,7 @@ const PTSD = () => {
     const navigateToComponent = (path) => {
         // Use the history.push method to navigate to the desired route
         navigate(path);
-      };
+    };
 
     const handleChange = (e, questionId) => {
         const selectedValue = parseInt(e.target.value); // Parse the selected value as an integer
@@ -505,12 +516,12 @@ const PTSD = () => {
                                 borderRadius: {
                                     xs: "27px 27px 27px 27px",
                                     md: "54px 54px 54px 54px"
-                                  },
-                                  p: {
+                                },
+                                p: {
                                     xs: 2,
                                     sm: 5,
                                     md: 2,
-                                  },
+                                },
                                 minHeight: "50px",
                             }}
                         >
@@ -524,10 +535,40 @@ const PTSD = () => {
                                 Psychological disorder can only be diagnosed by a human medical professional. So, the best option is to meet a medical professional.
                             </p>
                             <Button variant="contained" onClick={() => navigateToComponent('/Professional')}>
-                            View Professionals
+                                View Professionals
                             </Button>
                         </Typography>
+
+                        <div>
+                            <div>
+                                <Bar data={{
+                                    labels: ['Nightmares', 'Avoid Place', 'FlashBack', 'Anxiety', 'Trouple Falling Sleep'],
+                                    datasets: [
+                                        {
+                                            label: 'Post Traumatic Stress Disorder Test Result',
+                                            data: userAnswers,
+                                            backgroundColor: [
+                                                'rgba(255, 99, 132, 0.2)'
+
+                                            ],
+                                            borderColor: [
+                                                'rgb(255, 99, 132)'
+
+                                            ],
+                                            borderWidth: 1,
+                                        },
+                                    ], options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                }} />
+                            </div>
+                        </div>
                     </Box>
+
                 )}
             </Box>
         </Container>

@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import { Box, Drawer, IconButton, ListItem, Typography, Modal, TextField,Button,url } from "@mui/material";
+import { Box, Drawer, IconButton, ListItem, Typography, Modal, TextField,Button } from "@mui/material";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -20,7 +20,7 @@ import LoginService from "../../services/LoginService";
 
 const theme = createTheme();
 const initialRecordState = {
-  userName: "",
+  username: "",
   password: "",
 };
 
@@ -45,6 +45,7 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [submenuItems, setSubmenuItems] = useState([]);
   const open = Boolean(anchorEl);
+
   const handleClick = (event, id) => {
     if (navItems[id - 1].submenu) {
       if (anchorEl == null) {
@@ -65,7 +66,7 @@ const Navbar = () => {
 
   const validate = () => {
     let temp = {};
-    temp.userName = values.userName !== "" ? "" : "This field is required";
+    temp.username = values.username !== "" ? "" : "This field is required";
     temp.password = values.password !== "" ? "" : "This field is required";
 
     setErrors(temp);
@@ -85,13 +86,14 @@ const Navbar = () => {
       try {
         const response = await LoginService.Login(values);
         if (response.data.message === 'Login successful') {
-          // Handle successful login (e.g., redirect to a new page)
+          setValues(initialRecordState);
+          alert("Login Sucessfull");
+          window.location.replace("/"); 
+         
         } else {
-          // Handle failed login (e.g., show an error message)
           alert("Login failed. Please check your credentials.");
         }
       } catch (error) {
-        // Handle errors, e.g., network errors or errors from the server
         console.error("There was a problem with the login operation:", error);
       }
     }
@@ -243,12 +245,12 @@ const Navbar = () => {
                     fullWidth
                     id="email"
                     label="User Name"
-                    name="userName"
+                    name="username"
                     autoComplete="email"
                     onChange={handleInputChange}
-                    {...(errors.userName && {
+                    {...(errors.username && {
                       error: true,
-                      helperText: errors.userName,
+                      helperText: errors.username,
                     })}
                     autoFocus
                   />
@@ -419,4 +421,4 @@ const Navbar = () => {
     </AppBar>
   );
 };
-export default Navbar;
+export default Navbar;

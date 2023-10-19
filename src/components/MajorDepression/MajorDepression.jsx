@@ -9,6 +9,18 @@ import { Box, Container, Typography, Grid } from "@mui/material";
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import AnalysisService from "../../services/analysisservice";
+import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale, Title } from "chart.js";
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
 
 const questions = [
     {
@@ -232,21 +244,18 @@ const MajorDepression = () => {
     const navigateToComponent = (path) => {
         // Use the history.push method to navigate to the desired route
         navigate(path);
-      };
+    };
 
     const handleChange = (e, questionId) => {
-        const selectedValue = parseInt(e.target.value); // Parse the selected value as an integer
+        const selectedValue = parseInt(e.target.value);
 
-        // Find the question in the array of questions
         const question = questions.find((q) => q.id === questionId);
 
-        // Create an updated array with just the selected values
         const updatedUserAnswers = [
-            ...userAnswers.filter((ua) => ua.id !== questionId), // Remove the old answer, if it exists
-            selectedValue, // Add the new selected value
+            ...userAnswers.filter((ua) => ua.id !== questionId),
+            selectedValue,
         ];
 
-        // Update the state with the updated userAnswers array
         setUserAnswers(updatedUserAnswers);
 
     };
@@ -263,7 +272,6 @@ const MajorDepression = () => {
 
             if (response.data.result_depression != null) {
                 setResult(response.data.result_depression);
-                alert(response.data.result_depression);
             } else {
                 alert("Try Again!");
             }
@@ -491,6 +499,33 @@ const MajorDepression = () => {
                                 View Professionals
                             </Button>
                         </Typography>
+
+                        <div>
+                            <div>
+                                <Bar data={{
+                                    labels: ['Feeling down or depressed', 'Unstable Appetiet', 'Unreasonable Guilt or Shame', 'Less Concentration', 'Slowness of Movements', 'Suicidal Thoughts', 'Self-Harming Thoughts','Excessive Sadness'],
+                                    datasets: [
+                                        {
+                                            label: 'Major Depression Disorder Test Result',
+                                            data: userAnswers,
+                                            backgroundColor: [
+                                                'rgba(255, 159, 64, 0.2)',
+                                            ],
+                                            borderColor: [
+                                                'rgb(255, 159, 64)',
+                                            ],
+                                            borderWidth: 1,
+                                        },
+                                    ], options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                }} />
+                            </div>
+                        </div>
                     </Box>
                 )}
             </Box>

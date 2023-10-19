@@ -9,6 +9,17 @@ import { Box, Container, Typography, Grid } from "@mui/material";
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import AnalysisService from "../../services/analysisservice";
+import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale, Title } from "chart.js";
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const questions = [
     {
@@ -286,18 +297,16 @@ const GAD = () => {
       };
 
     const handleChange = (e, questionId) => {
-        const selectedValue = parseInt(e.target.value); // Parse the selected value as an integer
+        const selectedValue = parseInt(e.target.value); 
 
-        // Find the question in the array of questions
         const question = questions.find((q) => q.id === questionId);
 
-        // Create an updated array with just the selected values
         const updatedUserAnswers = [
-            ...userAnswers.filter((ua) => ua.id !== questionId), // Remove the old answer, if it exists
-            selectedValue, // Add the new selected value
+            ...userAnswers.filter((ua) => ua.id !== questionId), 
+            selectedValue, 
         ];
 
-        // Update the state with the updated userAnswers array
+    
         setUserAnswers(updatedUserAnswers);
 
     };
@@ -309,7 +318,7 @@ const GAD = () => {
 
     const handleSubmit = async (e) => {
         // e.preventDefault();
-        //alert(userAnswers);
+        
         try {
             const response = await AnalysisService.GAD(userAnswers);
 
@@ -557,7 +566,7 @@ const GAD = () => {
                                 minHeight: "50px",
                             }}
                         >
-                            <h2>Post Traumatic Stress Disorder Test Result</h2>
+                            <h2>Generalized Anxiety Test Result</h2>
                             <h3 style={{ color: "red" }}>
                                 Your Answers Score is - <strong>{((result * 100) / 10).toFixed(2)}%</strong>
                             </h3>
@@ -570,6 +579,34 @@ const GAD = () => {
                                 View Professionals
                             </Button>
                         </Typography>
+                        <div>
+                            <div>
+                                <Bar data={{
+                                    labels: ['Anxiousness', 'Mucsel Tense', 'Getting Stratied', 'Loss Control', 'Hoplessness', 'Sleeplessness', 'Less Concentration','Getting Irritated','Feeding Tiered','Ecessiveness of worry'],
+                                    datasets: [
+                                        {
+                                            label: 'Post Traumatic Stress Disorder Test Result',
+                                            data: userAnswers,
+                                            backgroundColor: [
+                                                'rgba(153, 102, 255, 0.2)',
+
+                                            ],
+                                            borderColor: [
+                                                'rgb(153, 102, 255)',
+
+                                            ],
+                                            borderWidth: 1,
+                                        },
+                                    ], options: {
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true
+                                            }
+                                        }
+                                    }
+                                }} />
+                            </div>
+                        </div>
                     </Box>
                 )}
             </Box>

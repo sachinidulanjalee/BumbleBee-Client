@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -9,6 +9,18 @@ import { Box, Container, Typography, Grid, FormHelperText } from "@mui/material"
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import AnalysisService from "../../services/analysisservice";
+import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale, Title } from "chart.js";
+import { Bar } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
+
 
 const questions = [
     {
@@ -193,6 +205,7 @@ const questions = [
             },
         ],
     },
+
 ];
 const initialVisibility = false;
 
@@ -204,24 +217,21 @@ const BipolarDisorder = () => {
     const [userAnswers, setUserAnswers] = useState([]);
     const [questionErrors, setQuestionErrors] = useState(new Array(questions.length).fill(false));
     const navigate = useNavigate();
-    
-    const navigateToComponent = (path) => {
-        navigate(path);
-      };
+    const navigateToComponent = (path) => { navigate(path); };
+    const [chartInstance, setChartInstance] = useState(null);
+
 
     const handleChange = (e, questionId) => {
-        const selectedValue = parseInt(e.target.value); // Parse the selected value as an integer
+        const selectedValue = parseInt(e.target.value);
 
-        // Find the question in the array of questions
         const question = questions.find((q) => q.id === questionId);
 
-        // Create an updated array with just the selected values
         const updatedUserAnswers = [
-            ...userAnswers.filter((ua) => ua.id !== questionId), // Remove the old answer, if it exists
-            selectedValue, // Add the new selected value
+            ...userAnswers.filter((ua) => ua.id !== questionId),
+            selectedValue,
         ];
 
-        // Update the state with the updated userAnswers array
+
         setUserAnswers(updatedUserAnswers);
 
     };
@@ -231,41 +241,53 @@ const BipolarDisorder = () => {
         setIsContentVisible(!isContentVisible);
     };
     const handleSubmit = async (e) => {
-        // e.preventDefault();
-        //alert(userAnswers);
+        try {
+            const response = await AnalysisService.BipolarDisorder(userAnswers);
 
-        if (validateAnswers()) {
-            try {
-                const response = await AnalysisService.BipolarDisorder(userAnswers);
+            if (response.data.result_BipolarDisorder != null) {
+                setResult(response.data.result_BipolarDisorder);
 
-                if (response.data.result_BipolarDisorder != null) {
-                    setResult(response.data.result_BipolarDisorder);
-                } else {
-                    alert("Try Again!");
+                if (chartInstance) {
+                    chartInstance.data.datasets[0].data[0] = result;
+                    chartInstance.update();
                 }
-            } catch (error) {
-                console.error("There was a problem with the fetch operation:", error);
+            } else {
+                alert("Try Again!");
             }
+        } catch (error) {
+            console.error("There was a problem with the fetch operation:", error);
         }
 
     };
 
-    const validateAnswers = () => {
-        let hasError = false;
-        const updatedQuestionErrors = userAnswers.map((answer, index) => {
-            if (answer === undefined) {
-                hasError = true;
-                return true; // Mark as error
-            }
-            return false; // No error
-        });
 
-        // Update the error state for questions
-        setQuestionErrors(updatedQuestionErrors);
 
-        return !hasError; // Return true if there are no errors
-    };
+    // useEffect(() => {
+    //     const ctx = document.getElementById('myChart');
 
+
+    //     // Create the chart with initial data
+    //     const chart =  new Chart(ctx, {
+    //         type: 'bar',
+    //         data: {
+    //           labels: ['Unusual Activeness', 'Unusual Takaiveness', 'Intense Happiness', 'No Fear of Failure', 'Having Mixed Feelings', 'Unstable self-confidence','Unstable interest','Bipolar Disorder'],
+    //           datasets: [{
+    //             label: '# of Votes',
+    //             data: [userAnswers],
+    //             borderWidth: 1
+    //           }]
+    //         },
+    //         options: {
+    //           scales: {
+    //             y: {
+    //               beginAtZero: true
+    //             }
+    //           }
+    //         }
+    //       });
+
+    //     setChartInstance(chart);
+    // }, []);
 
     return (
         <Container
@@ -388,7 +410,10 @@ const BipolarDisorder = () => {
                         <div>
                             <Grid container spacing={1}>
                                 <Grid item xs={6}>
-                                    <div style={{ backgroundColor: 'rgb(255, 153, 51, 0.5)' }}>
+                                    <div style={{
+                                        backgroundColor: 'rgb(255, 153, 51, 0.5)',
+
+                                    }}>
                                         <h2>Seek Help</h2>
                                         <ul>
                                             <li className="symptomsSubLsit">If you Enjoy the euphoria feeling</li>
@@ -454,11 +479,11 @@ const BipolarDisorder = () => {
                     />
                     <input type="hidden" name="DisorderId" value="1003" />
 
-                    {value.map((question, index) => (
+                    {value.map((question) => (
                         <FormControl style={{ width: "100%" }}>
                             <div style={{ display: "flex" }}>
                                 <FormLabel
-                                    id={`question-${question.id}-label`}
+                                    id="demo-row-radio-buttons-group-label"
                                     style={{
                                         display: "flex",
                                         justifyContent: "center",
@@ -466,16 +491,15 @@ const BipolarDisorder = () => {
                                         marginRight: "10px",
                                     }}
                                     sx={{ flex: 1 }}
-                                    required  
                                 >
                                     {question.name}
                                 </FormLabel>
                                 <RadioGroup
                                     row
-                                    aria-labelledby={`question-${question.id}-label`}
-                                    name={`row-radio-buttons-group-${question.id}`}
+                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                                    name="row-radio-buttons-group"
                                     sx={{ flex: 1 }}
-                                    value={userAnswers[index]}
+                                    value={question.answer}
                                     onChange={(e) => handleChange(e, question.id)}
                                 >
                                     {question.options.map((option) => (
@@ -487,10 +511,6 @@ const BipolarDisorder = () => {
                                     ))}
                                 </RadioGroup>
                             </div>
-                            {questionErrors[index] && (
-                                <FormHelperText>Please select an answer.</FormHelperText>
-                            )}
-
                         </FormControl>
                     ))}
                 </form>
@@ -518,7 +538,7 @@ const BipolarDisorder = () => {
                                 minHeight: "50px",
                             }}
                         >
-                            <h2>Post Traumatic Stress Disorder Test Result</h2>
+                            <h2>Bipolar Disorder Test Result</h2>
                             <h3 style={{ color: "red" }}>
                                 Your Answers Score is - <strong>{((result * 100) / 7).toFixed(2)}%</strong>
                             </h3>
@@ -527,10 +547,50 @@ const BipolarDisorder = () => {
                                 But we suggest you to seek help from a medical professional.<br /><br />
                                 Psychological disorder can only be diagnosed by a human medical professional. So, the best option is to meet a medical professional.
                             </p>
-                            <Button variant="contained"  onClick={() => navigateToComponent('/Professional')}>
+                            <Button variant="contained" onClick={() => navigateToComponent('/Professional')}>
                                 View Professionals
                             </Button>
+
+
                         </Typography>
+                        <div>
+                        <div>
+                            <Bar data={{
+                                labels: ['Unusual Activeness', 'Unusual Takaiveness', 'Intense Happiness', 'No Fear of Failure', 'Having Mixed Feelings', 'Unstable self-confidence', 'Unstable interest'],
+                                datasets: [
+                                    {
+                                        label: 'Bipolar Disorder Test Result',
+                                        data: userAnswers,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 159, 64, 0.2)',
+                                            'rgba(255, 205, 86, 0.2)',
+                                            'rgba(75, 192, 192, 0.2)',
+                                            'rgba(54, 162, 235, 0.2)',
+                                            'rgba(153, 102, 255, 0.2)',
+                                            'rgba(201, 203, 207, 0.2)'
+                                        ],
+                                        borderColor: [
+                                            'rgb(255, 99, 132)',
+                                            'rgb(255, 159, 64)',
+                                            'rgb(255, 205, 86)',
+                                            'rgb(75, 192, 192)',
+                                            'rgb(54, 162, 235)',
+                                            'rgb(153, 102, 255)',
+                                            'rgb(201, 203, 207)'
+                                        ],
+                                        borderWidth: 1,
+                                    },
+                                ], options: {
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true
+                                        }
+                                    }
+                                }
+                            }} />
+                        </div>
+                        </div>
                     </Box>
                 )}
             </Box>
