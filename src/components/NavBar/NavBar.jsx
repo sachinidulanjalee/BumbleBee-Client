@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Grid from "@mui/material/Grid";
 import { useNavigate } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
-import { Box, Drawer, IconButton, ListItem, Typography, Modal, TextField,Button } from "@mui/material";
+import { Box, Drawer, IconButton, ListItem, Typography, Modal, TextField, Button } from "@mui/material";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -16,6 +16,9 @@ import Menu from "@mui/material/Menu";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useFormNew } from "../../hooks/useFormNew";
 import LoginService from "../../services/LoginService";
+import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import Tooltip from '@mui/material/Tooltip';
 
 
 const theme = createTheme();
@@ -27,6 +30,8 @@ const initialRecordState = {
 const Navbar = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const [openLoginModal, setOpenLoginModal] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
   const navigateToComponent = (path) => {
@@ -44,6 +49,25 @@ const Navbar = () => {
   //Submenu
   const [anchorEl, setAnchorEl] = useState(null);
   const [submenuItems, setSubmenuItems] = useState([]);
+  const [LoginSessionChange, setLoginSessionChange] = React.useState("false");
+
+  function LogOut() {
+    localStorage.setItem("LoginState", "false");
+    setLoginSessionChange(!LoginSessionChange);
+    sessionStorage.clear();
+    window.location.href='/';
+  }
+
+  const handleOpenUserMenu = (event) => {
+
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+
+    setAnchorElUser(null);
+  };
+
   const open = Boolean(anchorEl);
 
   const handleClick = (event, id) => {
@@ -79,17 +103,21 @@ const Navbar = () => {
   const [IsOpenPasswordChangeDialog, setIsOpenPasswordChangeDialog] =
     useState(false);
 
-  const LoginClick =  async (e) => {
+    const [result, setResult] = useState("");
+  const LoginClick = async (e) => {
     e.preventDefault();
     if (validate()) {
 
       try {
         const response = await LoginService.Login(values);
         if (response.data.message === 'Login successful') {
+          setLoginSuccess(response.data.message);
           setValues(initialRecordState);
           alert("Login Sucessfull");
-          window.location.replace("/"); 
-         
+          setResult(response.data.username)
+          sessionStorage.setItem('logedInUsername', response.data.username);
+          window.location.href='/';
+
         } else {
           alert("Login failed. Please check your credentials.");
         }
@@ -197,23 +225,70 @@ const Navbar = () => {
             gap: "8px",
           }}
         >
-          <Box>
-            <Typography
-              sx={{
-                fontWeight: "400",
-                fontSize: "14px",
-                lineHeight: "21px",
-                color: "#fff",
-                opacity: "0.5",
-              }}
-            >
-              Hello,
-              <IconButton onClick={handleLoginModalOpen}>
-                <Login />
-              </IconButton>
-              Login
-            </Typography>
-          </Box>
+
+          {sessionStorage.getItem('logedInUsername') == null ? (
+            <Box>
+              <Typography
+                sx={{
+                  fontWeight: "400",
+                  fontSize: "14px",
+                  lineHeight: "21px",
+                  color: "#fff",
+                  opacity: "0.5",
+                }}
+              >
+                Hello,
+                <IconButton onClick={handleLoginModalOpen}>
+                  <Login />
+                </IconButton>
+                Login
+              </Typography>
+            </Box>
+          ) : (
+            <Box>
+              <Tooltip title="Log Out">
+                <IconButton
+                  size="large"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  color="inherit"
+                  onClick={handleOpenUserMenu}
+                >
+                  <AccountCircle />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{
+                  mt: "40px",
+                  mr: "40px",
+                }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                
+                <MenuItem
+                  onClick={() => LogOut()}
+                  key={"Logout"}
+                >
+                  {<LogoutIcon />} &nbsp; LogOut
+                </MenuItem>
+             
+              </Menu>
+              Hello, {sessionStorage !== "0" && ( <h4>{sessionStorage.getItem('logedInUsername')}</h4> )}
+            </Box>
+          )}
           <Modal
             open={openLoginModal}
             onClose={handleLoginModalClose}
@@ -235,9 +310,9 @@ const Navbar = () => {
               }}
             >
               <form noValidate onSubmit={LoginClick} action="">
-              <Typography component="h2" variant="h5">
-                      Sign in
-                    </Typography>
+                <Typography component="h2" variant="h5">
+                  Sign in
+                </Typography>
                 <Box noValidate autoComplete="on" sx={{ mt: 1 }}>
                   <TextField
                     margin="normal"
@@ -360,14 +435,11 @@ const Navbar = () => {
                   Login
                 </Typography>
               </Box>
-              {/* <img
-                src={userAvatar}
-                alt="avatar"
-                style={{ cursor: "pointer" }}
-              /> */}
+
               <MenuItem onClick={() => Login()} key={"Login"}>
                 {<Login />} &nbsp; Login
               </MenuItem>
+
             </Box>
             <Box
               sx={{
